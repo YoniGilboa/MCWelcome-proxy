@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,7 @@
       font-family: Arial, sans-serif;
       max-width: 600px;
       margin: 40px auto;
+      direction: rtl;
     }
     #chat-box {
       border: 1px solid #ccc;
@@ -19,12 +20,16 @@
     }
     .message {
       margin: 5px 0;
+      padding: 5px 10px;
+      border-radius: 8px;
     }
     .user {
-      color: blue;
+      background-color: #d0e7ff;
+      text-align: right;
     }
     .assistant {
-      color: green;
+      background-color: #d0ffd6;
+      text-align: left;
     }
     input[type="text"] {
       width: 80%;
@@ -67,8 +72,7 @@
           body: JSON.stringify({ message })
         });
         const data = await response.json();
-        // נניח שהתשובה של MCWelcome נמצאת ב data.output_text
-        const reply = data.output_text || JSON.stringify(data);
+        const reply = data.reply || "אין תשובה";
         addMessage(reply, 'assistant');
       } catch (err) {
         console.error(err);
