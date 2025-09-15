@@ -1,7 +1,4 @@
-export default async function handler(req, res) {
-  const { message } = req.body;
-
-  export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const { message } = req.body;
 
   if (!message) {
@@ -23,11 +20,9 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // בדיקה של המידע שמוחזר
     let reply = "אין תשובה";
 
     if (data.output && Array.isArray(data.output)) {
-      // מחזיר את הטקסט הראשון שנמצא ב-output
       for (const item of data.output) {
         if (item.type === "output_text" && item.text) {
           reply = item.text;
@@ -41,4 +36,5 @@ export default async function handler(req, res) {
     console.error("Error calling OpenAI:", error);
     res.status(500).json({ error: "Failed to fetch response" });
   }
-}
+};
+
