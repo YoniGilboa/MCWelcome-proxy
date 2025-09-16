@@ -11,18 +11,27 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    const assistantId = "asst_vpIYytqyYNerkuX554nLubH1";
+
     const response = await fetch(
-      "https://api.openai.com/v1/assistants/asst_vpIYytqyYNerkuX554nLubH1/responses",
+      `https://api.openai.com/v1/assistants/${assistantId}/responses`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
           "Content-Type": "application/json",
-          "OpenAI-Beta": "assistants=v2",
+          "OpenAI-Beta": "assistants=v2"
         },
         body: JSON.stringify({
-          input: message,
-        }),
+          input: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: message }
+              ]
+            }
+          ]
+        })
       }
     );
 
@@ -31,6 +40,7 @@ module.exports = async function handler(req, res) {
 
     let reply = "אין תשובה";
 
+    // בדיקה אם יש output_text
     if (data.output && Array.isArray(data.output)) {
       for (const item of data.output) {
         if (item.type === "output_text" && item.text) {
