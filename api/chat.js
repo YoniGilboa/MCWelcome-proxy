@@ -1,4 +1,7 @@
-const fetch = require("node-fetch");
+const { OpenAI } = require("openai");
+
+// את ה‑API Key שמים ב־Environment Variables ב‑Vercel כ־OPENAI_API_KEY
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -6,53 +9,22 @@ module.exports = async function handler(req, res) {
   }
 
   const { message } = req.body;
-  if (!message) {
-    return res.status(400).json({ error: "No message provided" });
-  }
+  if (!message) return res.status(400).json({ error: "No message provided" });
 
   try {
-    const assistantId = "asst_vpIYytqyYNerkuX554nLubH1";
+    // שליחה ישירה ל־assistant דרך chat.completions
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini", // מודל אמין ויעיל
+      messages: [
+        { role: "user", content: message }
+      ]
+    });
 
-    const response = await fetch(
-      `https://api.openai.com/v1/assistants/${assistantId}/responses`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-          "OpenAI-Beta": "assistants=v2"
-        },
-        body: JSON.stringify({
-          input: [
-            {
-              role: "user",
-              content: [
-                { type: "text", text: message }
-              ]
-            }
-          ]
-        })
-      }
-    );
-
-    const data = await response.json();
-    console.log("OPENAI RESPONSE:", JSON.stringify(data, null, 2));
-
-    let reply = "אין תשובה";
-
-    // בדיקה אם יש output_text
-    if (data.output && Array.isArray(data.output)) {
-      for (const item of data.output) {
-        if (item.type === "output_text" && item.text) {
-          reply = item.text;
-          break;
-        }
-      }
-    }
+    const reply = completion.choices?.[0]?.message?.content || "אין תשובה";
 
     res.status(200).json({ reply });
   } catch (error) {
-    console.error("Error calling OpenAI:", error);
+    console.error("OpenAI error:", error);
     res.status(500).json({ error: "Failed to fetch response" });
   }
 };
