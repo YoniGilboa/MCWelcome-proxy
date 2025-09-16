@@ -5,7 +5,6 @@ module.exports = async function handler(req, res) {
 
   let message;
   try {
-    // אם אתה שולח JSON, צריך לפרסר
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     message = body.message;
   } catch {
@@ -17,28 +16,75 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    // 1. צור thread חדש
+    const threadRes = await fetch("https://api.openai.com/v1/threads", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const thread = await threadRes.json();
+
+    // 2. הוסף הודעה ל-thread
+    await fetch(`https://api.openai.com/v1/threads/${thread.id}/messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: message }],
+        role: "user",
+        content: message,
       }),
     });
 
-    const data = await response.json();
+    // 3. הרץ את ה-assistant
+    let run = await fetch(`https://api.openai.com/v1/threads/${thread.id}/runs`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        assistant_id: "asst_vpIYytqyYNerkuX554nLubH1", // MCWelcome
+      }),
+    });
+    run = await run.json();
 
-    if (!data.choices || data.choices.length === 0) {
-      return res.status(200).json({ reply: "אין תשובה" });
+    // 4. המתן לסיום הריצה
+    let status = run.status;
+    while (status === "queued" || status === "in_progress") {
+      await new Promise((r) => setTimeout(r, 1500));
+      const checkRun = await fetch(
+        `https://api.openai.com/v1/threads/${thread.id}/runs/${run.id}`,
+        {
+          headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+        }
+      );
+      const runStatus = await checkRun.json();
+      status = runStatus.status;
     }
 
-    const reply = data.choices[0].message.content;
+    // 5. שלוף הודעות אחרונות
+    const messagesRes = await fetch(
+      `https://api.openai.com/v1/threads/${thread.id}/messages`,
+      {
+        headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+      }
+    );
+    const messagesData = await messagesRes.json();
+
+    const lastAssistantMessage = messagesData.data.find(
+      (m) => m.role === "assistant"
+    );
+
+    const reply =
+      lastAssistantMessage?.content?.[0]?.text?.value || "אין תשובה";
+
     res.status(200).json({ reply });
   } catch (error) {
-    console.error("Error calling OpenAI:", error);
+    console.error("Error calling Assistants API:", error);
     res.status(500).json({ error: "Failed to fetch response" });
   }
 };
