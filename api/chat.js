@@ -35,9 +35,8 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ reply: "אין תשובה" });
     }
 
-    // שולף את ההודעה הראשונה של האסיסטנט
-    const firstOutput = data.output.find(item => item.type === "message") || data.output[0];
-    const reply = firstOutput.content?.[0]?.text?.value || "אין תשובה";
+    const firstMessage = data.output.find(item => item.type === "message") || data.output[0];
+    const reply = firstMessage.content?.[0]?.text?.value || "אין תשובה";
 
     res.status(200).json({ reply });
 
