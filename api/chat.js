@@ -1,40 +1,44 @@
 module.exports = async function handler(req, res) {
-  const { message } = req.body;
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  let message;
+  try {
+    // אם אתה שולח JSON, צריך לפרסר
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    message = body.message;
+  } catch {
+    return res.status(400).json({ error: "Invalid JSON body" });
+  }
 
   if (!message) {
     return res.status(400).json({ error: "No message provided" });
   }
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4-0613",
-        input: message
-      })
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: message }],
+      }),
     });
 
     const data = await response.json();
 
-    let reply = "אין תשובה";
-
-    if (data.output && Array.isArray(data.output)) {
-      for (const item of data.output) {
-        if (item.type === "output_text" && item.text) {
-          reply = item.text;
-          break;
-        }
-      }
+    if (!data.choices || data.choices.length === 0) {
+      return res.status(200).json({ reply: "אין תשובה" });
     }
 
+    const reply = data.choices[0].message.content;
     res.status(200).json({ reply });
   } catch (error) {
     console.error("Error calling OpenAI:", error);
     res.status(500).json({ error: "Failed to fetch response" });
   }
 };
-
