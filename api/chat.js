@@ -1,103 +1,42 @@
-module.exports = async function handler(req, res) {
-  const { message } = req.body;
+const fetch = require("node-fetch");
 
+module.exports = async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { message } = req.body;
   if (!message) {
     return res.status(400).json({ error: "No message provided" });
   }
 
   try {
-    // 1. צור thread חדש
-    const threadRes = await fetch("https://api.openai.com/v1/threads", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const thread = await threadRes.json();
-    console.log("THREAD:", thread);
-    if (!thread.id) {
-      return res.status(500).json({ error: "Failed to create thread" });
-    }
-
-    // 2. הוסף הודעה של המשתמש
-    const userMsgRes = await fetch(
-      `https://api.openai.com/v1/threads/${thread.id}/messages`,
+    const response = await fetch(
+      "https://api.openai.com/v1/assistants/asst_vpIYytqyYNerkuX554nLubH1/responses",
       {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           "Content-Type": "application/json",
+          "OpenAI-Beta": "assistants=v2",
         },
         body: JSON.stringify({
-          role: "user",
-          content: message,
-        }),
-      }
-    );
-    console.log("USER MESSAGE STATUS:", userMsgRes.status);
-
-    // 3. הפעל את האסיסטנט
-    const runRes = await fetch(
-      `https://api.openai.com/v1/threads/${thread.id}/runs`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          assistant_id: "asst_vpIYytqyYNerkuX554nLubH1",
+          input: message,
         }),
       }
     );
 
-    const run = await runRes.json();
-    console.log("RUN:", run);
-    if (!run.id) {
-      return res.status(500).json({ error: "Failed to start run" });
-    }
-
-    // 4. חכה שהריצה תסתיים
-    let runStatus = run;
-    while (runStatus.status !== "completed") {
-      await new Promise((r) => setTimeout(r, 1000));
-      const statusRes = await fetch(
-        `https://api.openai.com/v1/threads/${thread.id}/runs/${run.id}`,
-        {
-          headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-        }
-      );
-      runStatus = await statusRes.json();
-      console.log("RUN STATUS:", runStatus.status);
-      if (runStatus.status === "failed") {
-        return res.status(500).json({ error: "Run failed" });
-      }
-    }
-
-    // 5. שלוף הודעות אחרונות
-    const messagesRes = await fetch(
-      `https://api.openai.com/v1/threads/${thread.id}/messages`,
-      {
-        headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-      }
-    );
-    const messagesData = await messagesRes.json();
-    console.log("MESSAGES:", JSON.stringify(messagesData, null, 2));
-
-    // מצא את ההודעה האחרונה של האסיסטנט
-    const lastAssistantMessage = messagesData.data.find(
-      (m) => m.role === "assistant"
-    );
+    const data = await response.json();
+    console.log("OPENAI RESPONSE:", JSON.stringify(data, null, 2));
 
     let reply = "אין תשובה";
 
-    if (lastAssistantMessage && lastAssistantMessage.content) {
-      if (lastAssistantMessage.content[0]?.text?.value) {
-        reply = lastAssistantMessage.content[0].text.value;
-      } else {
-        reply = JSON.stringify(lastAssistantMessage.content);
+    if (data.output && Array.isArray(data.output)) {
+      for (const item of data.output) {
+        if (item.type === "output_text" && item.text) {
+          reply = item.text;
+          break;
+        }
       }
     }
 
