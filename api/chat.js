@@ -16,24 +16,29 @@ module.exports = async function handler(req, res) {
     });
 
     const thread = await threadRes.json();
+    console.log("THREAD:", thread);
     if (!thread.id) {
       return res.status(500).json({ error: "Failed to create thread" });
     }
 
-    // 2. הוסף את הודעת המשתמש
-    await fetch(`https://api.openai.com/v1/threads/${thread.id}/messages`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        role: "user",
-        content: message,
-      }),
-    });
+    // 2. הוסף הודעה של המשתמש
+    const userMsgRes = await fetch(
+      `https://api.openai.com/v1/threads/${thread.id}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "user",
+          content: message,
+        }),
+      }
+    );
+    console.log("USER MESSAGE STATUS:", userMsgRes.status);
 
-    // 3. הפעל את ה-assistant שלך (MCWelcome)
+    // 3. הפעל את האסיסטנט
     const runRes = await fetch(
       `https://api.openai.com/v1/threads/${thread.id}/runs`,
       {
@@ -49,6 +54,7 @@ module.exports = async function handler(req, res) {
     );
 
     const run = await runRes.json();
+    console.log("RUN:", run);
     if (!run.id) {
       return res.status(500).json({ error: "Failed to start run" });
     }
@@ -64,12 +70,13 @@ module.exports = async function handler(req, res) {
         }
       );
       runStatus = await statusRes.json();
+      console.log("RUN STATUS:", runStatus.status);
       if (runStatus.status === "failed") {
         return res.status(500).json({ error: "Run failed" });
       }
     }
 
-    // 5. שלוף הודעות אחרונות מה-thread
+    // 5. שלוף הודעות אחרונות
     const messagesRes = await fetch(
       `https://api.openai.com/v1/threads/${thread.id}/messages`,
       {
@@ -77,8 +84,9 @@ module.exports = async function handler(req, res) {
       }
     );
     const messagesData = await messagesRes.json();
+    console.log("MESSAGES:", JSON.stringify(messagesData, null, 2));
 
-    // מצא את ההודעה האחרונה של הסוכן
+    // מצא את ההודעה האחרונה של האסיסטנט
     const lastAssistantMessage = messagesData.data.find(
       (m) => m.role === "assistant"
     );
