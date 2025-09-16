@@ -1,4 +1,4 @@
-// שימוש ב‑node-fetch ב־CommonJS
+// Node.js CommonJS + node-fetch
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports = async function handler(req, res) {
@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
           "OpenAI-Beta": "assistants=v2"
         },
         body: JSON.stringify({
-          messages: [
+          input: [
             {
               role: "user",
               content: [
@@ -32,6 +32,7 @@ module.exports = async function handler(req, res) {
 
     const data = await response.json();
 
+    // בדיקה בסיסית
     if (!data.output || !Array.isArray(data.output) || data.output.length === 0) {
       return res.status(200).json({ reply: "אין תשובה" });
     }
