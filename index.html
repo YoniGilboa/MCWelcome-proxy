@@ -14,7 +14,7 @@
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f5f6fa;
-      min-height: 70vh;
+      min-height: 100vh;
       direction: rtl;
       display: flex;
       align-items: center;
@@ -382,7 +382,7 @@
       // Create avatar
       const avatar = document.createElement('div');
       avatar.className = `avatar ${sender}-avatar`;
-      avatar.textContent = sender === 'user' ? 'MC' : 'אני';
+      avatar.textContent = sender === 'user' ? 'אני' : 'MC';
       
       // Create message content
       const messageContent = document.createElement('div');
