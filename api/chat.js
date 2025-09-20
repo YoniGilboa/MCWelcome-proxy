@@ -19,7 +19,6 @@ module.exports = async function handler(req, res) {
     }
 
     // Step 1: Create a thread
-    let threadId = req.body.threadId;
     if (!threadId) {
       const threadResponse = await fetch("https://api.openai.com/v1/threads", {
         method: "POST",
