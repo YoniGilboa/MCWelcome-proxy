@@ -19,24 +19,27 @@ module.exports = async function handler(req, res) {
     }
 
     // Step 1: Create a thread
-    const threadResponse = await fetch("https://api.openai.com/v1/threads", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "OpenAI-Beta": "assistants=v2"
-      },
-      body: JSON.stringify({})
-    });
+    let threadId = req.body.threadId;
+    if (!threadId) {
+      const threadResponse = await fetch("https://api.openai.com/v1/threads", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "OpenAI-Beta": "assistants=v2"
+        },
+        body: JSON.stringify({})
+      });
 
-    if (!threadResponse.ok) {
-      const error = await threadResponse.text();
-      console.error("Thread creation failed:", error);
-      return res.status(500).json({ error: "Failed to create thread" });
+      if (!threadResponse.ok) {
+        const error = await threadResponse.text();
+        console.error("Thread creation failed:", error);
+        return res.status(500).json({ error: "Failed to create thread" });
+      }
+
+      const thread = await threadResponse.json();
+      const threadId = thread.id;
     }
-
-    const thread = await threadResponse.json();
-    const threadId = thread.id;
 
     // Step 2: Add message to thread
     const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
