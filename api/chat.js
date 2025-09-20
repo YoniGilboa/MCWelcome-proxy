@@ -1,12 +1,11 @@
 const fetch = require("node-fetch");
-
+let threadId = null;
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { message } = req.body;
-  let threadId = null;
   if (!message) {
     return res.status(400).json({ error: "No message provided" });
   }
