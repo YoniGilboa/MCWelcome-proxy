@@ -6,6 +6,7 @@ module.exports = async function handler(req, res) {
   }
 
   const { message } = req.body;
+  let threadId = null;
   if (!message) {
     return res.status(400).json({ error: "No message provided" });
   }
@@ -37,7 +38,7 @@ module.exports = async function handler(req, res) {
       }
 
       const thread = await threadResponse.json();
-      const threadId = thread.id;
+      threadId = thread.id;
     }
 
     // Step 2: Add message to thread
