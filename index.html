@@ -348,6 +348,7 @@
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     let messageCount = 0;
+    let threadId = null; // שמירת threadId לכל שיחה
 
     // Remove welcome message when first message is sent
     function removeWelcomeMessage() {
@@ -461,10 +462,19 @@
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message })
+          body: JSON.stringify({ 
+          message,
+          threadId   // שולחים threadId לשרת
+          })          
         });
         
         const data = await response.json();
+
+        // אם קיבלנו מהשרת threadId חדש - נשמור אותו
+      if (data.threadId && !threadId) {
+        threadId = data.threadId;
+        console.log("🧵 Thread initialized:", threadId);
+      }
         
         // Remove loading message with animation
         loadingMsg.style.animation = 'slideOut 0.3s ease-in';
