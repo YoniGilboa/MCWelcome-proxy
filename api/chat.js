@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
     }
 
     // Step 2: Add message to thread
-    const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+    let messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
@@ -54,10 +54,56 @@ module.exports = async function handler(req, res) {
       })
     });
 
+    // אם יש שגיאה שה-thread נעול בגלל run פעיל → פותחים thread חדש
     if (!messageResponse.ok) {
-      const error = await messageResponse.text();
-      console.error("Message creation failed:", error);
-      return res.status(500).json({ error: "Failed to add message" });
+      const errorText = await messageResponse.text();
+      console.error("Message creation failed:", errorText);
+
+      if (errorText.includes("while a run") && errorText.includes("is active")) {
+        console.log("Thread is locked by active run. Creating new thread...");
+
+        // פותחים thread חדש
+        const newThreadResponse = await fetch("https://api.openai.com/v1/threads", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "OpenAI-Beta": "assistants=v2"
+          },
+          body: JSON.stringify({})
+        });
+
+         if (!newThreadResponse.ok) {
+          const err2 = await newThreadResponse.text();
+          console.error("Thread recreation failed:", err2);
+          return res.status(500).json({ error: "Failed to recover from locked thread" });
+        }
+
+        const newThread = await newThreadResponse.json();
+        threadId = newThread.id;
+
+        // שולחים שוב את ההודעה ל-thread החדש
+        messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "OpenAI-Beta": "assistants=v2"
+          },
+          body: JSON.stringify({
+            role: "user",
+            content: message
+          })
+        });
+
+        if (!messageResponse.ok) {
+          const err3 = await messageResponse.text();
+          console.error("Message creation retry failed:", err3);
+          return res.status(500).json({ error: "Failed to add message after recreating thread" });
+        }
+      } else {
+        return res.status(500).json({ error: "Failed to add message" });
+      }
     }
 
     // Step 3: Run the assistant
