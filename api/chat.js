@@ -128,14 +128,14 @@ module.exports = async function handler(req, res) {
     const run = await runResponse.json();
     const runId = run.id;
 
-    // Step 4: Poll for completion
+        // Step 4: Poll for completion
     let runStatus = run.status;
     let attempts = 0;
     const maxAttempts = 30; // 30 seconds timeout
 
     while (runStatus !== "completed" && runStatus !== "failed" && attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-      
+
       const statusResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}`, {
         headers: {
           "Authorization": `Bearer ${apiKey}`,
@@ -150,11 +150,45 @@ module.exports = async function handler(req, res) {
 
       const statusData = await statusResponse.json();
       runStatus = statusData.status;
-      attempts++;
-    }
 
-    if (runStatus !== "completed") {
-      return res.status(500).json({ error: "Assistant run did not complete successfully" });
+      // 🔹 טיפול במצב requires_action (function call)
+      if (runStatus === "requires_action") {
+        const toolCalls = statusData.required_action?.submit_tool_outputs?.tool_calls || [];
+        
+        for (const call of toolCalls) {
+          if (call.function.name === "send_summary_to_make") {
+            const args = JSON.parse(call.function.arguments);
+            console.log("Calling Make webhook with:", args);
+
+            // קריאה ל־Make
+            await fetch(process.env.MAKE_WEBHOOK_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(args),
+            });
+
+            // מחזירים תשובה ל־Assistant
+            await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+                "OpenAI-Beta": "assistants=v2"
+              },
+              body: JSON.stringify({
+                tool_outputs: [
+                  {
+                    tool_call_id: call.id,
+                    output: JSON.stringify({ success: true })
+                  }
+                ]
+              })
+            });
+          }
+        }
+      }
+
+      attempts++;
     }
 
     // Step 5: Get the response
