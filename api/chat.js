@@ -172,14 +172,19 @@ module.exports = async function handler(req, res) {
 
             // קריאת בדיקה ישירה ל-Make
             const testPayload = { mcwelcome_notes: "בדיקת חיבור ישירה מ-chat.js" };
-
+            
+            console.log("Sending to Make:", {
+              url: "https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3",
+              body: JSON.stringify(testPayload)
+            });
+            
             try {
                 const res = await fetch(
                 "https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3",
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(testPayload),
+                  body: JSON.stringify(testPayload)
                 }
                 );
 
