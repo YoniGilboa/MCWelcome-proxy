@@ -161,7 +161,8 @@ module.exports = async function handler(req, res) {
             console.log("Calling Make webhook with:", args);
 
             // קריאה ל־Make
-            await fetch(process.env.MAKE_WEBHOOK_URL, {
+            //process.env.MAKE_WEBHOOK_URL
+            await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(args),
