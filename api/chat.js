@@ -162,11 +162,33 @@ module.exports = async function handler(req, res) {
 
             // קריאה ל־Make
             //process.env.MAKE_WEBHOOK_URL
-            await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(args),
-            });
+            //console.log("Function call args:", args, JSON.stringify(args, null, 2));
+
+            //await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+              //method: "POST",
+              //headers: { "Content-Type": "application/json" },
+              //body: JSON.stringify(args),
+            //});
+
+            // קריאת בדיקה ישירה ל-Make
+            const testPayload = { mcwelcome_notes: "בדיקת חיבור ישירה מ-chat.js" };
+
+            try {
+                const res = await fetch(
+                "https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(testPayload),
+                }
+                );
+
+                console.log("Make test response status:", res.status);
+                const text = await res.text();
+                console.log("Make test response body:", text);
+            } catch (err) {
+                console.error("Error calling Make test webhook:", err);
+            }            
 
             // מחזירים תשובה ל־Assistant
             await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
