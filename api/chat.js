@@ -196,12 +196,15 @@ module.exports = async function handler(req, res) {
             const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
             console.log("Function call args:", args, JSON.stringify(args, null, 2));
 
-            await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+            //await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
             //await fetch(MAKE_WEBHOOK_URL, {
+            fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {            
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(args)
-            });        
+            }).catch((err) => {
+              console.error("Error sending to Make:", err);
+            });
             
             // מחזירים תשובה ל־Assistant
             await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
