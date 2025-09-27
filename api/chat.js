@@ -2,12 +2,18 @@ const fetch = require("node-fetch");
 let threadId = null;
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    //return res.status(405).json({ error: "Method not allowed" });
+    return new Response(JSON.stringify({ reset: true, error: "Method not allowed" }), {
+      headers: { "Content-Type": "application/json" }
+    });
   }
 
   const { message } = req.body;
   if (!message) {
-    return res.status(400).json({ error: "No message provided" });
+    //return res.status(400).json({ error: "No message provided" });
+    return new Response(JSON.stringify({ reset: true, error: "No message provided" }), {
+      headers: { "Content-Type": "application/json" }
+    });
   }
 
   try {
@@ -15,7 +21,10 @@ module.exports = async function handler(req, res) {
     const apiKey = process.env.OPENAI_API_KEY;
     
     if (!apiKey) {
-      return res.status(500).json({ error: "OpenAI API key not configured" });
+      //return res.status(500).json({ error: "OpenAI API key not configured" });
+      return new Response(JSON.stringify({ reset: true, error: "OpenAI API key not configured" }), {
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     // Step 1: Create a thread
@@ -33,7 +42,10 @@ module.exports = async function handler(req, res) {
       if (!threadResponse.ok) {
         const error = await threadResponse.text();
         console.error("Thread creation failed:", error);
-        return res.status(500).json({ error: "Failed to create thread" });
+        //return res.status(500).json({ error: "Failed to create thread" });
+        return new Response(JSON.stringify({ reset: true, error: "Failed to create thread" }), {
+          headers: { "Content-Type": "application/json" }
+        });
       }
 
       const thread = await threadResponse.json();
@@ -76,7 +88,10 @@ module.exports = async function handler(req, res) {
          if (!newThreadResponse.ok) {
           const err2 = await newThreadResponse.text();
           console.error("Thread recreation failed:", err2);
-          return res.status(500).json({ error: "Failed to recover from locked thread" });
+          //return res.status(500).json({ error: "Failed to recover from locked thread" });
+           return new Response(JSON.stringify({ reset: true, error: "Failed to recover from locked thread" }), {
+            headers: { "Content-Type": "application/json" }
+            });
         }
 
         const newThread = await newThreadResponse.json();
@@ -99,10 +114,16 @@ module.exports = async function handler(req, res) {
         if (!messageResponse.ok) {
           const err3 = await messageResponse.text();
           console.error("Message creation retry failed:", err3);
-          return res.status(500).json({ error: "Failed to add message after recreating thread" });
+          //return res.status(500).json({ error: "Failed to add message after recreating thread" });
+          return new Response(JSON.stringify({ reset: true, error: "Failed to add message after recreating thread" }), {
+            headers: { "Content-Type": "application/json" }
+          });
         }
       } else {
-        return res.status(500).json({ error: "Failed to add message" });
+        //return res.status(500).json({ error: "Failed to add message" });
+        return new Response(JSON.stringify({ reset: true, error: "Failed to add message" }), {
+            headers: { "Content-Type": "application/json" }
+        });
       }
     }
 
@@ -122,7 +143,10 @@ module.exports = async function handler(req, res) {
     if (!runResponse.ok) {
       const error = await runResponse.text();
       console.error("Run creation failed:", error);
-      return res.status(500).json({ error: "Failed to run assistant" });
+      //return res.status(500).json({ error: "Failed to run assistant" });
+      return new Response(JSON.stringify({ reset: true, error: "Failed to run assistant" }), {
+            headers: { "Content-Type": "application/json" }
+      });
     }
 
     const run = await runResponse.json();
@@ -171,6 +195,11 @@ module.exports = async function handler(req, res) {
               body: JSON.stringify(args)
             });  
 
+            // ✅ שליחה הצליחה → מחזירים reset ל־frontend
+            return new Response(JSON.stringify({ reset: true }), {
+              headers: { "Content-Type": "application/json" }
+            });
+            
             // מחזירים תשובה ל־Assistant
             await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
               method: "POST",
@@ -206,7 +235,10 @@ module.exports = async function handler(req, res) {
     if (!messagesResponse.ok) {
       const error = await messagesResponse.text();
       console.error("Messages retrieval failed:", error);
-      return res.status(500).json({ error: "Failed to retrieve messages" });
+      //return res.status(500).json({ error: "Failed to retrieve messages" });
+      return new Response(JSON.stringify({ reset: true, error: "Failed to retrieve message" }), {
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     const messages = await messagesResponse.json();
@@ -250,6 +282,9 @@ module.exports = async function handler(req, res) {
     res.status(200).json({ reply });
   } catch (error) {
     console.error("Error calling OpenAI:", error);
-    res.status(500).json({ error: "Failed to fetch response" });
+    //res.status(500).json({ error: "Failed to fetch response" });
+    return new Response(JSON.stringify({ reset: true, error: "Failed to etch response" }), {
+        headers: { "Content-Type": "application/json" }
+      });
   }
 };
