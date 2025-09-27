@@ -358,7 +358,21 @@
     const sendBtn = document.getElementById('send-btn');
     let messageCount = 0;
     let threadId = null; // שמירת threadId לכל שיחה
+    
+    // Auto resize textarea
+    userInput.addEventListener('input', () => {
+    userInput.style.height = 'auto'; // מאפס כדי למדוד מחדש
+    userInput.style.height = userInput.scrollHeight + 'px'; // מתאים את הגובה
+    });
 
+    // למנוע שליחה ב־Enter
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.stopPropagation(); // מונע bubbling
+        return; // לא שולח
+      }
+    });
+    
     //איפוס Thread וניקוי ההודעות ברגע שמתבצע Reset (בסוף שיחה או במצב של שגיאה בשליחת הודעה)
     function resetChatUI() {
       console.log("🔄 Resetting chat UI...");
