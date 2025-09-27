@@ -201,13 +201,7 @@ module.exports = async function handler(req, res) {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(args)
-            });  
-
-            // ✅ שליחה הצליחה → מחזירים reset ל־frontend
-            threadId = null;
-            return new Response(JSON.stringify({ reset: true }), {
-              headers: { "Content-Type": "application/json" }
-            });
+            });        
             
             // מחזירים תשובה ל־Assistant
             await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
@@ -225,6 +219,12 @@ module.exports = async function handler(req, res) {
                   }
                 ]
               })
+            });
+
+            // ✅ שליחה הצליחה → מחזירים reset ל־frontend
+            threadId = null;
+            return new Response(JSON.stringify({ reset: true }), {
+              headers: { "Content-Type": "application/json" }
             });
           }
         }
