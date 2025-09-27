@@ -538,14 +538,17 @@
     
     userInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !sendBtn.disabled) {
-        e.preventDefault();
-        sendMessage();
+        //e.preventDefault();
+        //sendMessage();
+        return;
       }
     });
 
     // Auto-resize input and focus
     userInput.addEventListener('input', (e) => {
-      // Auto-expand textarea-like behavior could be added here
+      // Auto-expand textarea-like behavior
+      userInput.style.height = 'auto'; // מאפס קודם
+      userInput.style.height = userInput.scrollHeight + 'px'; // מתאים לגובה הטקסט
     });
     
     // Focus on input when page loads
