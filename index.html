@@ -376,8 +376,8 @@
     //איפוס Thread וניקוי ההודעות ברגע שמתבצע Reset (בסוף שיחה או במצב של שגיאה בשליחת הודעה)
     function resetChatUI() {
       console.log("🔄 Resetting chat UI...");
-      threadId = null; // מאפס את ה-thread כדי שהבקשה הבאה תפתח חדש
       document.getElementById("chat-messages").innerHTML = ""; // מנקה את ההודעות
+      threadId = null; // מאפס את ה-thread כדי שהבקשה הבאה תפתח חדש
     }
     
     // Remove welcome message when first message is sent
