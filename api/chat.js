@@ -3,6 +3,7 @@ let threadId = null;
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     //return res.status(405).json({ error: "Method not allowed" });
+    threadId = null;
     return new Response(JSON.stringify({ reset: true, error: "Method not allowed" }), {
       headers: { "Content-Type": "application/json" }
     });
@@ -11,6 +12,7 @@ module.exports = async function handler(req, res) {
   const { message } = req.body;
   if (!message) {
     //return res.status(400).json({ error: "No message provided" });
+    threadId = null;
     return new Response(JSON.stringify({ reset: true, error: "No message provided" }), {
       headers: { "Content-Type": "application/json" }
     });
@@ -22,6 +24,7 @@ module.exports = async function handler(req, res) {
     
     if (!apiKey) {
       //return res.status(500).json({ error: "OpenAI API key not configured" });
+      threadId = null;
       return new Response(JSON.stringify({ reset: true, error: "OpenAI API key not configured" }), {
         headers: { "Content-Type": "application/json" }
       });
@@ -43,6 +46,7 @@ module.exports = async function handler(req, res) {
         const error = await threadResponse.text();
         console.error("Thread creation failed:", error);
         //return res.status(500).json({ error: "Failed to create thread" });
+        threadId = null;
         return new Response(JSON.stringify({ reset: true, error: "Failed to create thread" }), {
           headers: { "Content-Type": "application/json" }
         });
@@ -89,9 +93,10 @@ module.exports = async function handler(req, res) {
           const err2 = await newThreadResponse.text();
           console.error("Thread recreation failed:", err2);
           //return res.status(500).json({ error: "Failed to recover from locked thread" });
+           threadId = null;
            return new Response(JSON.stringify({ reset: true, error: "Failed to recover from locked thread" }), {
-            headers: { "Content-Type": "application/json" }
-            });
+             headers: { "Content-Type": "application/json" }
+           });
         }
 
         const newThread = await newThreadResponse.json();
@@ -115,12 +120,14 @@ module.exports = async function handler(req, res) {
           const err3 = await messageResponse.text();
           console.error("Message creation retry failed:", err3);
           //return res.status(500).json({ error: "Failed to add message after recreating thread" });
+          threadId = null;
           return new Response(JSON.stringify({ reset: true, error: "Failed to add message after recreating thread" }), {
             headers: { "Content-Type": "application/json" }
           });
         }
       } else {
         //return res.status(500).json({ error: "Failed to add message" });
+        threadId = null;
         return new Response(JSON.stringify({ reset: true, error: "Failed to add message" }), {
             headers: { "Content-Type": "application/json" }
         });
@@ -144,6 +151,7 @@ module.exports = async function handler(req, res) {
       const error = await runResponse.text();
       console.error("Run creation failed:", error);
       //return res.status(500).json({ error: "Failed to run assistant" });
+      threadId = null;
       return new Response(JSON.stringify({ reset: true, error: "Failed to run assistant" }), {
             headers: { "Content-Type": "application/json" }
       });
@@ -196,6 +204,7 @@ module.exports = async function handler(req, res) {
             });  
 
             // ✅ שליחה הצליחה → מחזירים reset ל־frontend
+            threadId = null;
             return new Response(JSON.stringify({ reset: true }), {
               headers: { "Content-Type": "application/json" }
             });
