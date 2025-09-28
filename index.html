@@ -365,9 +365,11 @@
     const sendBtn = document.getElementById('send-btn');
     let messageCount = 0;
     let threadId = null; // שמירת threadId לכל שיחה
-    const messagesDiv = document.getElementById("messages");
-    const inputContainer = document.getElementById("input-container");
-    const backContainer = document.getElementById("end-container");
+
+    // selectors מתוקנים
+    const messagesDiv = document.getElementById("chat-box");
+    const inputContainer = document.querySelector(".input-container");
+    const backContainer = document.getElementById("back-container");
     const backBtn = document.getElementById("back-btn");
 
     // פונקציה לסיים שיחה
@@ -383,236 +385,174 @@
       // איפוס הצ’אט מקומית
       messagesDiv.innerHTML = "";
       // מחזיר לאתר (לינק ל־Webflow)
-      window.location.href = "https://your-webflow-site.com"; 
+      window.location.href = "https://mind-channel-pro-site.webflow.io/"; 
     });
 
     // פונקציה שמזהה הודעת סיכום
     function isSummaryMessage(text) {
-      return text.startsWith("WOW..."); // אפשר לשנות לפי ה־pattern שסיכמנו
+      return text.trim().toUpperCase().startsWith("WOW");
     }
 
     // 📌 בכל מקום בקוד שבו מוסיפים הודעה מהאסיסטנט לצ'אט:
-    function addAssistantMessage(text) {
-      const msg = document.createElement("div");
-      msg.className = "assistant-msg";
-      msg.innerText = text;
-      messagesDiv.appendChild(msg);
-
-      // אם זו הודעת סיכום → מסיימים את השיחה
-      if (isSummaryMessage(text)) {
-        endChat();
-      }
+  function addAssistantMessage(text) {
+    addMessage(text, 'assistant');
+    if (isSummaryMessage(text)) {
+      endChat();
     }
-    
+  }
+
+   // מחיקת הודעת פתיחה
+   function removeWelcomeMessage() {
+     const welcomeMessage = document.querySelector('.welcome-message');
+     if (welcomeMessage) {
+       welcomeMessage.style.animation = 'slideOut 0.3s ease-in';
+       setTimeout(() => welcomeMessage.remove(), 300);
+     }
+   }
+
+  function getCurrentTime() {
+    const now = new Date();
+    return now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+
+  // הוספת הודעה לצ’אט
+  function addMessage(text, sender, showTime = true) {
+    if (messageCount === 0 && sender === 'user') {
+      removeWelcomeMessage();
+  }
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = `avatar ${sender}-avatar`;
+    avatar.textContent = sender === 'user' ? 'אני' : sender === 'assistant' ? 'MC' : '';
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+
+    if (sender === 'loading') {
+      messageContent.innerHTML = `
+        <span>מחכה לתשובה</span>
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>`;
+    } else {
+      messageContent.textContent = text;
+    }
+
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'message-time';
+    timeSpan.textContent = showTime ? getCurrentTime() : '';
+
+    if (sender === 'user') {
+      messageDiv.append(timeSpan, messageContent, avatar);
+    } else if (sender === 'loading') {
+      messageDiv.append(messageContent);
+    } else {
+      messageDiv.append(avatar, messageContent, timeSpan);
+    }
+
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    messageCount++;
+
+    return messageDiv;
+  }
+
+    function resetChatUI() {
+      messagesDiv.innerHTML = "";
+      threadId = null;
+      console.log("🔄 Chat reset");
+    }
+
+    function updateSendButton(sending = false) {
+    const sendText = sendBtn.querySelector('.send-text');
+    const sendIcon = sendBtn.querySelector('.send-icon');
+
+    if (sending) {
+      sendBtn.disabled = true;
+      sendText.textContent = 'שולח...';
+      sendIcon.textContent = '⏳';
+      sendBtn.style.background = '#7f8c8d';
+    } else {
+      sendBtn.disabled = false;
+      sendText.textContent = 'שלח';
+      sendIcon.textContent = '➤';
+      sendBtn.style.background = '#34495e';
+    }
+  }
+
+    async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    updateSendButton(true);
+    userInput.disabled = true;
+
+    addMessage(message, 'user');
+    userInput.value = '';
+
+    const loadingMsg = addMessage('', 'loading', false);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, threadId })
+      });
+
+      const data = await response.json();
+
+      if (data.threadId && !threadId) {
+        threadId = data.threadId;
+        console.log("🧵 Thread initialized:", threadId);
+      }
+
+      if (data.reset) {
+        resetChatUI();
+        return;
+      }
+
+      loadingMsg.style.animation = 'slideOut 0.3s ease-in';
+      setTimeout(() => loadingMsg.remove(), 300);
+
+      setTimeout(() => {
+        if (response.ok) {
+          addAssistantMessage(data.reply || "אין תשובה זמינה כרגע");
+        } else {
+          addAssistantMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`);
+        }
+      }, 500);
+
+    } catch (err) {
+      console.error('Connection error:', err);
+      if (loadingMsg.parentNode) loadingMsg.remove();
+      addAssistantMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.');
+    } finally {
+      updateSendButton(false);
+      userInput.disabled = false;
+      userInput.focus();
+    }
+  }
+
+  // מאזינים
+  sendBtn.addEventListener('click', sendMessage);
+
+  userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !sendBtn.disabled) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
     // Auto resize textarea
     userInput.addEventListener('input', () => {
     userInput.style.height = 'auto'; // מאפס כדי למדוד מחדש
     userInput.style.height = userInput.scrollHeight + 'px'; // מתאים את הגובה
     });
 
-    // למנוע שליחה ב־Enter
-    userInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.stopPropagation(); // מונע bubbling
-        return; // לא שולח
-      }
-    });
-    
-    //איפוס Thread וניקוי ההודעות ברגע שמתבצע Reset (בסוף שיחה או במצב של שגיאה בשליחת הודעה)
-    function resetChatUI() {
-      console.log("🔄 Resetting chat UI...");
-      document.getElementById("chat-messages").innerHTML = ""; // מנקה את ההודעות
-      threadId = null; // מאפס את ה-thread כדי שהבקשה הבאה תפתח חדש
-    }
-    
-    // Remove welcome message when first message is sent
-    function removeWelcomeMessage() {
-      const welcomeMessage = document.querySelector('.welcome-message');
-      if (welcomeMessage) {
-        welcomeMessage.style.animation = 'slideOut 0.3s ease-in';
-        setTimeout(() => {
-          if (welcomeMessage.parentNode) {
-            welcomeMessage.parentNode.removeChild(welcomeMessage);
-          }
-        }, 300);
-      }
-    }
-
-    function getCurrentTime() {
-      const now = new Date();
-      return now.toLocaleTimeString('he-IL', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: false 
-      });
-    }
-
-    function (text, sender, showTime = true) {
-      if (messageCount === 0 && sender === 'user') {
-        removeWelcomeMessage();
-      }
-      
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${sender}`;
-      
-      // Create avatar
-      const avatar = document.createElement('div');
-      avatar.className = `avatar ${sender}-avatar`;
-      avatar.textContent = sender === 'user' ? 'אני' : 'MC';
-      
-      // Create message content
-      const messageContent = document.createElement('div');
-      messageContent.className = 'message-content';
-      
-      if (sender === 'loading') {
-        messageContent.innerHTML = `
-          <span>מחכה לתשובה</span>
-          <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>
-        `;
-      } else {
-        messageContent.textContent = text;
-      }
-      
-      // Create time stamp
-      const timeSpan = document.createElement('span');
-      timeSpan.className = 'message-time';
-      timeSpan.textContent = showTime ? getCurrentTime() : '';
-      
-      // Arrange elements based on sender
-      if (sender === 'user') {
-        messageDiv.appendChild(timeSpan);
-        messageDiv.appendChild(messageContent);
-        messageDiv.appendChild(avatar);
-      } else if (sender === 'loading') {
-        messageDiv.appendChild(messageContent);
-      } else {
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(messageContent);
-        messageDiv.appendChild(timeSpan);
-      }
-      
-      chatBox.appendChild(messageDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      messageCount++;
-      
-      return messageDiv;
-    }
-
-    function updateSendButton(sending = false) {
-      const sendText = sendBtn.querySelector('.send-text');
-      const sendIcon = sendBtn.querySelector('.send-icon');
-      
-      if (sending) {
-        sendBtn.disabled = true;
-        sendText.textContent = 'שולח...';
-        sendIcon.textContent = '⏳';
-        sendBtn.style.background = '#7f8c8d';
-      } else {
-        sendBtn.disabled = false;
-        sendText.textContent = 'שלח';
-        sendIcon.textContent = '➤';
-        sendBtn.style.background = '#34495e';
-      }
-    }
-
-    async function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
-      
-      // Update UI state
-      updateSendButton(true);
-      userInput.disabled = true;
-      
-      (message, 'user');
-      userInput.value = '';
-      
-      // Show typing indicator
-      const loadingMsg = ('', 'loading', false);
-
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-          message,
-          threadId   // שולחים threadId לשרת
-          })          
-        });
-        
-        const data = await response.json();
-
-        // אם קיבלנו מהשרת threadId חדש - נשמור אותו
-        if (data.threadId && !threadId) {
-          threadId = data.threadId;
-          console.log("🧵 Thread initialized:", threadId);
-        }
-
-        //בדיקה לתשובת reset מהשרת
-        if (data.reset) {
-          resetChatUI();
-          return; // יוצא מהפונקציה כי אין מה להציג מהשרת
-        }
-        
-        // Remove loading message with animation
-        loadingMsg.style.animation = 'slideOut 0.3s ease-in';
-        setTimeout(() => {
-          if (loadingMsg.parentNode) {
-            loadingMsg.parentNode.removeChild(loadingMsg);
-          }
-        }, 300);
-        
-        // Add response after a short delay for better UX
-        setTimeout(() => {
-          if (response.ok) {
-            const reply = data.reply || "אין תשובה זמינה כרגע";
-            //(reply, 'assistant');
-            addAssistantMessage(reply);
-          } else {
-            //addMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`, 'assistant');
-            addAssistantMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`);
-          }
-        }, 500);
-        
-      } catch (err) {
-        console.error('Connection error:', err);
-        
-        // Remove loading message
-        if (loadingMsg.parentNode) {
-          loadingMsg.parentNode.removeChild(loadingMsg);
-        }
-        
-        //addMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.', 'assistant');
-        addAssistantMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.');
-      } finally {
-        // Reset UI state
-        updateSendButton(false);
-        userInput.disabled = false;
-        userInput.focus();
-      }
-    }
-
-    // Event listeners
-    sendBtn.addEventListener('click', sendMessage);
-    
-    userInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !sendBtn.disabled) {
-        //e.preventDefault();
-        //sendMessage();
-        return;
-      }
-    });
-
-    // Auto-resize input and focus
-    userInput.addEventListener('input', (e) => {
-      // Auto-expand textarea-like behavior
-      userInput.style.height = 'auto'; // מאפס קודם
-      userInput.style.height = userInput.scrollHeight + 'px'; // מתאים לגובה הטקסט
-    });
-    
     // Focus on input when page loads
     window.addEventListener('load', () => {
       userInput.focus();
