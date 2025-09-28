@@ -277,29 +277,9 @@ module.exports = async function handler(req, res) {
 
       // אם יש tool call → תטפל בזה
       if (assistantMessage?.content) {
-        const toolCall = assistantMessage.content.find(c => c.type === "tool_calls");
-        if (toolCall) {
-          for (const call of toolCall.tool_calls) {
-            if (call.function.name === "send_summary_to_make") {
-              const args = JSON.parse(call.function.arguments);
-              console.log("Calling Make webhook with:", args);
-
-              // קריאה ל־Make
-              await fetch(process.env.MAKE_WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(args),
-              });
-
-              reply = "✅ הסיכום נשלח ל-Make";
-            }
-          }
-        } else {
-          // רגיל: טקסט מה-assistant
-          const textContent = assistantMessage.content.find(content => content.type === "text");
-          if (textContent && textContent.text && textContent.text.value) {
-            reply = textContent.text.value;
-          }
+        const textContent = assistantMessage.content.find(c => c.type === "text");
+        if (textContent?.text?.value) {
+          reply = textContent.text.value;
         }
       }
     }
