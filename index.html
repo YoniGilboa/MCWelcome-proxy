@@ -343,11 +343,18 @@
     </div>
 
     <div class="input-container">
-      <textarea id="user-input" placeholder="כתבו את ההודעה שלכם כאן..."></textarea>
+      <!-- שדה קלט -->
+      <textarea id="user-input" placeholder="הקלד/י כאן..."></textarea>
+
+      <!-- כפתור שליחה -->
       <button id="send-btn">
         <span class="send-text">שלח</span>
         <span class="send-icon">➤</span>
       </button>
+
+      <div class="back-container" id="back-container" style="display: none;">
+        <button id="back-btn">חזרה לאתר</button>
+      </div>
     </div>
     
   </div>
@@ -358,6 +365,44 @@
     const sendBtn = document.getElementById('send-btn');
     let messageCount = 0;
     let threadId = null; // שמירת threadId לכל שיחה
+    const messagesDiv = document.getElementById("messages");
+    const inputContainer = document.getElementById("input-container");
+    const backContainer = document.getElementById("end-container");
+    const backBtn = document.getElementById("back-btn");
+
+    // פונקציה לסיים שיחה
+    function endChat() {
+      // חוסם את תיבת ההקלדה
+      inputContainer.style.display = "none";
+      // מציג את הכפתור לחזרה
+      backContainer.style.display = "block";
+    }
+    
+    // מאזין ללחיצה על הכפתור
+    backBtn.addEventListener("click", () => {
+      // איפוס הצ’אט מקומית
+      messagesDiv.innerHTML = "";
+      // מחזיר לאתר (לינק ל־Webflow)
+      window.location.href = "https://your-webflow-site.com"; 
+    });
+
+    // פונקציה שמזהה הודעת סיכום
+    function isSummaryMessage(text) {
+      return text.startsWith("WOW..."); // אפשר לשנות לפי ה־pattern שסיכמנו
+    }
+
+    // 📌 בכל מקום בקוד שבו מוסיפים הודעה מהאסיסטנט לצ'אט:
+    function addAssistantMessage(text) {
+      const msg = document.createElement("div");
+      msg.className = "assistant-msg";
+      msg.innerText = text;
+      messagesDiv.appendChild(msg);
+
+      // אם זו הודעת סיכום → מסיימים את השיחה
+      if (isSummaryMessage(text)) {
+        endChat();
+      }
+    }
     
     // Auto resize textarea
     userInput.addEventListener('input', () => {
