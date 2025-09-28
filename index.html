@@ -447,7 +447,7 @@
       });
     }
 
-    function addMessage(text, sender, showTime = true) {
+    function (text, sender, showTime = true) {
       if (messageCount === 0 && sender === 'user') {
         removeWelcomeMessage();
       }
@@ -527,11 +527,11 @@
       updateSendButton(true);
       userInput.disabled = true;
       
-      addMessage(message, 'user');
+      (message, 'user');
       userInput.value = '';
       
       // Show typing indicator
-      const loadingMsg = addMessage('', 'loading', false);
+      const loadingMsg = ('', 'loading', false);
 
       try {
         const response = await fetch('/api/chat', {
@@ -569,9 +569,11 @@
         setTimeout(() => {
           if (response.ok) {
             const reply = data.reply || "אין תשובה זמינה כרגע";
-            addMessage(reply, 'assistant');
+            //(reply, 'assistant');
+            addAssistantMessage(reply);
           } else {
-            addMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`, 'assistant');
+            //addMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`, 'assistant');
+            addAssistantMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`);
           }
         }, 500);
         
@@ -583,7 +585,8 @@
           loadingMsg.parentNode.removeChild(loadingMsg);
         }
         
-        addMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.', 'assistant');
+        //addMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.', 'assistant');
+        addAssistantMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.');
       } finally {
         // Reset UI state
         updateSendButton(false);
