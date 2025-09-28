@@ -165,6 +165,21 @@ module.exports = async function handler(req, res) {
     let attempts = 0;
     const maxAttempts = 30; // 30 seconds timeout
 
+    // 🔹 fetch עם timeout
+    async function fetchWithTimeout(resource, options = {}, timeout = 3000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+         const response = await fetch(resource, {
+         ...options,
+         signal: controller.signal
+        });
+        return response;
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
     while (runStatus !== "completed" && runStatus !== "failed" && attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
 
@@ -185,53 +200,51 @@ module.exports = async function handler(req, res) {
 
       // 🔹 טיפול במצב requires_action (function call)
       if (runStatus === "requires_action") {
-        const toolCalls = statusData.required_action?.submit_tool_outputs?.tool_calls || [];
-        
-        for (const call of toolCalls) {
-          if (call.function.name === "send_summary_to_make") {
-            const args = JSON.parse(call.function.arguments);
-            console.log("Calling Make webhook with:", args);
+          const toolCalls = statusData.required_action?.submit_tool_outputs?.tool_calls || [];
 
-            // קריאה ל־Make
-            const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
-            console.log("Function call args:", args, JSON.stringify(args, null, 2));
+          for (const call of toolCalls) {
+            if (call.function.name === "send_summary_to_make") {
+              const args = JSON.parse(call.function.arguments);
+              console.log("Calling Make webhook with:", args);
 
-            //await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-            //await fetch(MAKE_WEBHOOK_URL, {
-            fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {            
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(args)
-            }).catch((err) => {
-              console.error("Error sending to Make:", err);
-            });
-            
-            // מחזירים תשובה ל־Assistant
-            await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
-              method: "POST",
-              headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json",
-                "OpenAI-Beta": "assistants=v2"
-              },
-              body: JSON.stringify({
-                tool_outputs: [
-                  {
-                    tool_call_id: call.id,
-                    output: JSON.stringify({ success: true })
-                  }
-                ]
-              })
-            });
+              try {
+                // קריאה ל־Make עם timeout של 3 שניות
+                const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
+                console.log("Function call args:", args, JSON.stringify(args, null, 2));
 
-            // ✅ שליחה הצליחה → מחזירים reset ל־frontend
-            threadId = null;
-            return new Response(JSON.stringify({ reset: true }), {
-              headers: { "Content-Type": "application/json" }
-            });
+                //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
+                await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(args)
+                }, 3000);
+              } catch (error) {
+                console.error("Make webhook call failed or timed out:", error);
+                // 👆 השגיאה תירשם רק בלוג של Vercel, לא נשלחת ללקוח
+              }
+
+              // מחזירים תשובה ל־Assistant כדי לשחרר אותו
+              await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${apiKey}`,
+                  "Content-Type": "application/json",
+                  "OpenAI-Beta": "assistants=v2"
+                },
+                body: JSON.stringify({
+                  tool_outputs: [
+                    {
+                      tool_call_id: call.id,
+                      output: JSON.stringify({ success: true })
+                    }
+                  ]
+                })
+              });
+
+              // ❌ אין reset כאן — הצ'אט ממשיך רגיל, reset יהיה רק בכפתור ה־frontend
+            }
           }
         }
-      }
 
       attempts++;
     }
