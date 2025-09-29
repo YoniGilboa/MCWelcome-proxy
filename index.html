@@ -373,19 +373,15 @@
     const backBtn = document.getElementById("back-btn");
 
     // פונקציה לסיים שיחה
-    function endChat() {
-      // חוסם את תיבת ההקלדה
-      inputContainer.style.display = "none";
-      // מציג את הכפתור לחזרה
-      backContainer.style.display = "block";
+    function endChat() {      
+      inputContainer.style.display = "none";  // חוסם את תיבת ההקלדה
+      backContainer.style.display = "block";  // מציג את הכפתור לחזרה
     }
     
     // מאזין ללחיצה על הכפתור
     backBtn.addEventListener("click", () => {
-      // איפוס הצ’אט מקומית
-      messagesDiv.innerHTML = "";
-      // מחזיר לאתר (לינק ל־Webflow)
-      window.location.href = "https://mind-channel-pro-site.webflow.io/"; 
+      messagesDiv.innerHTML = "";  // איפוס הצ’אט מקומית
+      window.location.href = "https://mind-channel-pro-site.webflow.io/";  // מחזיר לאתר Webflow
     });
 
     // פונקציה שמזהה הודעת סיכום
@@ -520,7 +516,8 @@
 
       setTimeout(() => {
         if (response.ok) {
-          addAssistantMessage(data.reply || "אין תשובה זמינה כרגע");
+          const replyText = data.reply || data.conversation_summary || "אין תשובה זמינה כרגע";
+          addAssistantMessage(replyText);
         } else {
           addAssistantMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`);
         }
@@ -542,8 +539,10 @@
 
   userInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && !sendBtn.disabled) {
-      e.preventDefault();
+      e.preventDefault();   // שולח במקום ירידת שורה
       sendMessage();
+    } else if (e.key === 'Enter' && e.shiftKey) {
+      e.stopPropagation();  // מוסיף שורה
     }
   });
 
