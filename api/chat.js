@@ -143,8 +143,7 @@ module.exports = async function handler(req, res) {
         "OpenAI-Beta": "assistants=v2"
       },
       body: JSON.stringify({
-        assistant_id: assistantId,
-        instructions: userMessage
+        assistant_id: assistantId
       })
     });
 
