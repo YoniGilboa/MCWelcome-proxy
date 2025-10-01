@@ -217,7 +217,15 @@ module.exports = async function handler(req, res) {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(args)
-                }, 3000);
+                }, 10000);
+                
+                //Debug calling Make
+                console.log("Make response status:", response.status);
+                console.log("Make response body:", await response.text());
+                if (!response.ok) {
+                  console.error("Make webhook returned an error status:", response.status);
+                }
+                
               } catch (error) {
                 console.error("Make webhook call failed or timed out:", error);
                 // 👆 השגיאה תירשם רק בלוג של Vercel, לא נשלחת ללקוח
