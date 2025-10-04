@@ -21,17 +21,23 @@
     }
 
     .chat-container {
+      display: none;            /* מוסתר כברירת מחדל */
+      justify-content: center;  /* מרכז אופקית */
+      align-items: center;      /* מרכז אנכית */
       width: 100%;
       max-width: 800px;
       height: 90vh;
       background: white;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);      
       overflow: hidden;
       border: 1px solid #e0e6ed;
     }
+
+    #chat-container.active {
+      display: flex;            /* מוצג כשמופעל */
+      flex-direction: column;
+    }  
 
     .chat-header {
       background: #2c3e50;
@@ -444,7 +450,7 @@
   </div>
   
   <!-- אזור הצ'אט - מוסתר בהתחלה -->
-  <div id="chat-container" style="display:none;display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div id="chat-container" style="display:none;">
     <div class="chat-container">
       <div class="chat-header">
         <h1>💬 MCWelcome Chat</h1>
@@ -726,7 +732,8 @@
 
       // מעבר מהשאלון לצ'אט
       document.getElementById('intro-form').style.display = 'none';
-      document.getElementById('chat-container').style.display = 'block';
+      //document.getElementById('chat-container').style.display = 'block';
+      document.getElementById("chat-container").classList.add("active");
     });
     
   </script>
