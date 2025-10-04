@@ -690,6 +690,19 @@
       }
     `;
     document.head.appendChild(style);
+
+    // מאזין לכל שדות החובה בשאלון
+    const requiredInputs = document.querySelectorAll('#userForm input[required]');
+    const continueBtn = document.getElementById('continueBtn');
+
+    requiredInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        // בדיקה אם כל השדות מלאים
+        const allFilled = Array.from(requiredInputs).every(field => field.value.trim() !== '');
+        continueBtn.disabled = !allFilled;
+      });
+    });
+    
   </script>
 </body>
 </html>
