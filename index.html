@@ -328,18 +328,50 @@
   </style>
 </head>
 <<body>
-  <div class="chat-container">
-    <div class="chat-header">
-      <h1>💬 MCWelcome Chat</h1>
-    </div>
-    
-    <div id="chat-box">
+
+  <!-- שאלון הכרות -->
+  <div id="intro-form">
+
+   <div id="chat-box">
       <div class="welcome-message">
         שלום וברוך הבא ל - Mind Channel 🌟
         אנחנו כאן כדי לעזור לך לגלות איך אפשר לייעל את העסק שלך בעזרת פתרונות חכמים משולבי AI.
-        כדי שנכיר אותך טוב יותר ונוכל להתאים את ההמלצות בדיוק עבורך, נתחיל בכמה שאלות קצרות.
-        נשמח להתחיל – איך לקרוא לך?
+        כדי שנכיר אותך טוב יותר ונוכל להתאים את ההמלצות בדיוק עבורך,
+        נתחיל בכמה שאלות קצרות ונמשיך בשיחה שתעזור לנו להבין קצת את האתגרים שיש לך.
       </div>
+    </div>
+    
+    <h3>בוא נתחיל בהיכרות קצרה</h3>
+    <form id="userForm">
+      <label>שם מלא*:<br>
+        <input type="text" id="fullName" required>
+      </label><br><br>
+
+      <label>שם העסק*:<br>
+        <input type="text" id="businessName" required>
+      </label><br><br>
+
+      <label>אימייל*:<br>
+        <input type="email" id="email" required>
+      </label><br><br>
+
+      <label>טלפון (לא חובה):<br>
+        <input type="tel" id="phone">
+      </label><br><br>
+
+      <button type="submit" id="continueBtn" disabled>המשך</button>
+    </form>
+  </div>
+
+  <!-- אזור הצ'אט - מוסתר בהתחלה -->
+  <div id="chat-container" style="display:none;">
+    <!-- הצ'אט נטען פה -->
+  </div>
+
+  
+  <div class="chat-container">
+    <div class="chat-header">
+      <h1>💬 MCWelcome Chat</h1>
     </div>
 
     <div class="input-container">
