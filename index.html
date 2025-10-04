@@ -323,15 +323,15 @@
     }
     
     #intro-form form {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      display: block; /* ביטול flex */
     }
     
     #intro-form label {
       font-weight: 500;
       color: #2c3e50;
-      margin-bottom: 4px; /* קצת ריווח בין השאלה לשדה */
+      display: block; /* מבטיח שה-label והשדה בשורות נפרדות */
+      margin-top: 6px; /* רווח קטן מלמעלה בין שדות */
+      margin-bottom: 2px; /* רווח קטן בין label ל-input */      
     }
     
     #intro-form input {
@@ -386,9 +386,8 @@
       font-weight: 500;
       line-height: 1.8;
       margin-bottom: 20px;
-      max-width: 700px; /* השורות יהיו ארוכות יותר */
-      margin-left: auto;
-      margin-right: auto; /* נשאר ממורכז */
+      max-width: none; /* 🔹 שיבטל את ההגבלה הצרה */
+      white-space: normal; /* לוודא שלא שובר מילים באמצע */
     }
     
     /* למובייל */
