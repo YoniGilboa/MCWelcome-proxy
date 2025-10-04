@@ -306,24 +306,20 @@
 
     /* עיצוב מסך ההסבר והשאלון הראשוני */
     #intro-form {
-      width: 100%;
       max-width: 600px;
+      width: 100%;
+      margin: 60px auto; /* ממקם באמצע רוחבית עם רווח מלמעלה */
       background: white;
+      padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      padding: 30px;
       text-align: right;
-      color: #2c3e50;
-      font-size: 16px;
-      line-height: 1.6;
     }
     
     #intro-form h3 {
-      margin-top: 20px;
-      margin-bottom: 20px;
-      color: #34495e;
-      font-size: 20px;
       text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
     }
     
     #intro-form form {
@@ -353,21 +349,22 @@
       outline: none;
     }
     
+    /*  מראה כפתור ההמשך */
     #continueBtn {
+      display: block;
+      width: 100%;
+      padding: 12px;
       background: #34495e;
       color: white;
       border: none;
-      border-radius: 25px;
-      padding: 12px 20px;
+      border-radius: 8px;
       font-size: 16px;
-      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-top: 10px;
     }
     
     #continueBtn:disabled {
-      opacity: 0.5;
+      background: #bdc3c7;
       cursor: not-allowed;
     }
     
