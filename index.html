@@ -16,7 +16,7 @@
       background: #f5f6fa;
       min-height: 100vh;
       direction: rtl;
-      padding: 20px;
+      padding: 10px;
     }
 
     .chat-container {
@@ -323,25 +323,28 @@
     }
     
     #intro-form form {
-      display: block; /* ביטול flex */
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
     
     #intro-form label {
       font-weight: 500;
       color: #2c3e50;
-      display: block; /* מבטיח שה-label והשדה בשורות נפרדות */
-      margin-top: 6px; /* רווח קטן מלמעלה בין שדות */
-      margin-bottom: 6px; /* רווח קטן בין label ל-input */      
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0; /* לוודא שאין רווח נוסף */     
     }
     
     #intro-form input {
       width: 100%;
-      padding: 10px 14px;
+      padding: 20px 14px;
       border: 1px solid #e0e6ed;
       border-radius: 8px;
       font-size: 16px;
       background: #fafbfc;
       transition: border-color 0.3s ease, background 0.3s ease;
+      margin-top: 4px; /* רווח קטן בין הכיתוב לשדה */
     }
     
     #intro-form input:focus {
@@ -423,19 +426,19 @@
     <form id="userForm">
       <label>שם מלא*:<br>
         <input type="text" id="fullName" required>
-      </label><br><br>
+      </label>
 
       <label>שם העסק*:<br>
         <input type="text" id="businessName" required>
-      </label><br><br>
+      </label>
 
       <label>אימייל*:<br>
         <input type="email" id="email" required>
-      </label><br><br>
+      </label>
 
       <label>טלפון (לא חובה):<br>
         <input type="tel" id="phone">
-      </label><br><br>
+      </label><br>
 
       <button type="submit" id="continueBtn" disabled>המשך</button>
     </form>
