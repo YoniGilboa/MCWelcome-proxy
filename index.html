@@ -16,21 +16,7 @@
       background: #f5f6fa;
       min-height: 100vh;
       direction: rtl;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 20px;
-    }
-
-    .intro-form {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #333;
-      background-color: #f3f7ff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-      text-align: right;
     }
 
     .chat-container {
@@ -318,24 +304,104 @@
       flex-direction: row-reverse;
     }
 
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      color: #7f8c8d;
-      padding: 40px 20px;
-      font-style: italic;
+    /* עיצוב מסך ההסבר והשאלון הראשוני */
+    #intro-form {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      text-align: right;
+      color: #2c3e50;
+      font-size: 16px;
+      line-height: 1.6;
     }
-
-    .welcome-message {
+    
+    #intro-form h3 {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      color: #34495e;
+      font-size: 20px;
+      text-align: center;
+    }
+    
+    #intro-form form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    #intro-form label {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    
+    #intro-form input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #fafbfc;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    
+    #intro-form input:focus {
+      border-color: #34495e;
+      background: white;
+      outline: none;
+    }
+    
+    #continueBtn {
+      background: #34495e;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    #continueBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    #continueBtn:hover:not(:disabled) {
+      background: #2c3e50;
+      transform: translateY(-2px);
+    }
+    
+    /* ההודעת פתיחה */
+    #intro-form .welcome-message {
       background: #f8f9fa;
       border: 2px dashed #bdc3c7;
       border-radius: 12px;
       padding: 20px;
-      margin: 20px 0;
       text-align: center;
       color: #34495e;
       font-weight: 500;
+      line-height: 1.8;
+      margin-bottom: 20px;
     }
+    
+    /* למובייל */
+    @media (max-width: 768px) {
+      #intro-form {
+        max-width: 95%;
+        padding: 20px;
+      }
+    
+      #intro-form h3 {
+        font-size: 18px;
+      }
+    }
+
+    
   </style>
 </head>
 <<body>
