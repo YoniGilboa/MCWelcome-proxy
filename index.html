@@ -331,7 +331,6 @@
 
   <!-- שאלון הכרות -->
   <div id="intro-form">
-
    <div id="chat-box">
       <div class="welcome-message">
         שלום וברוך הבא ל - Mind Channel 🌟
@@ -365,41 +364,37 @@
 
   <!-- אזור הצ'אט - מוסתר בהתחלה -->
   <div id="chat-container" style="display:none;">
-    <!-- הצ'אט נטען פה -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <h1>💬 MCWelcome Chat</h1>
+      </div>
+
+      <div class="input-container">        
+        <!-- כפתור שליחה -->
+        <button id="send-btn">
+          <span class="send-text">שלח</span>
+          <span class="send-icon">➤</span>
+        </button>
+          
+        <!-- שדה קלט -->
+        <textarea id="user-input" placeholder="הקלד/י כאן..."></textarea>
+      </div>    
+
+      <!-- הקונטיינר של כפתור החזרה, מוסתר בהתחלה -->
+      <div id="back-container" style="display: none; text-align:center; margin-top: 20px;">
+        <button id="back-btn" style="
+          padding: 10px 20px;
+          background-color: #4CAF50;
+          border: none;
+          color: white;
+          font-size: 16px;
+          border-radius: 8px;
+          cursor: pointer;">
+          חזרה לאתר
+        </button>
+      </div>
   </div>
-
-  
-  <div class="chat-container">
-    <div class="chat-header">
-      <h1>💬 MCWelcome Chat</h1>
-    </div>
-
-    <div class="input-container">
-      <!-- שדה קלט -->
-      <textarea id="user-input" placeholder="הקלד/י כאן..."></textarea>
-
-      <!-- כפתור שליחה -->
-      <button id="send-btn">
-        <span class="send-text">שלח</span>
-        <span class="send-icon">➤</span>
-      </button>      
-    </div>
-
-    <!-- הקונטיינר של כפתור החזרה, מוסתר בהתחלה -->
-    <div id="back-container" style="display: none; text-align:center; margin-top: 20px;">
-      <button id="back-btn" style="
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        border: none;
-        color: white;
-        font-size: 16px;
-        border-radius: 8px;
-        cursor: pointer;">
-        חזרה לאתר
-      </button>
-    </div>
-    
-  </div>
+</div>
 
   <script>
     const chatBox = document.getElementById('chat-box');
