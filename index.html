@@ -12,36 +12,25 @@
     }
 
     body {
-      //display: block;
+      display: block;
       background: #f5f6fa;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       direction: rtl;
       padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
     }
 
-    #chat-container {
-      display: none;            /* מוסתר כברירת מחדל */
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: stretch;
+    .chat-container {
       width: 100%;
       max-width: 800px;
       height: 90vh;
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
       border: 1px solid #e0e6ed;
-      margin: 0 auto;
-    }
-    
-    #chat-container.active {
-      display: flex;            /* מוצג כשמופעל */
     }
 
     .chat-header {
@@ -418,11 +407,11 @@
     
   </style>
 </head>
-<body>
+<<body>
 
   <!-- שאלון הכרות -->
   <div id="intro-form">
-     <div id="intro-box">
+   <div id="intro-box">
       <div class="welcome-message">
         שלום וברוך הבא ל - Mind Channel 🌟<br>
         אנחנו כאן כדי לעזור לך לגלות איך אפשר לייעל את העסק שלך<br>
@@ -453,10 +442,11 @@
       <button type="submit" id="continueBtn" disabled>המשך</button>
     </form>
   </div>
-  
+
   <!-- אזור הצ'אט - מוסתר בהתחלה -->
-  <div id="chat-container" class="chat-container" style="display:none;">
-     <div class="chat-header">
+  <div id="chat-container" style="display:none;">
+    <div class="chat-container">
+      <div class="chat-header">
         <h1>💬 MCWelcome Chat</h1>
       </div>
 
@@ -488,6 +478,7 @@
         </button>
       </div>
   </div>
+</div>
 
   <script>
     const chatBox = document.getElementById('chat-box');
@@ -735,8 +726,7 @@
 
       // מעבר מהשאלון לצ'אט
       document.getElementById('intro-form').style.display = 'none';
-      //document.getElementById('chat-container').style.display = 'block';
-      document.getElementById("chat-container").classList.add("active");
+      document.getElementById('chat-container').style.display = 'block';
     });
     
   </script>
