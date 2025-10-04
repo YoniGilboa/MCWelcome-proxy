@@ -12,11 +12,12 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: block;
       background: #f5f6fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       direction: rtl;
-      padding: 10px;
+      padding: 40px 20px;
     }
 
     .chat-container {
@@ -308,9 +309,9 @@
     #intro-form {
       max-width: 600px;
       width: 100%;
-      margin: 60px auto; /* ממקם באמצע רוחבית עם רווח מלמעלה */
+      margin: 0 auto; /* ממקם באמצע רוחבית עם רווח מלמעלה */
       background: white;
-      padding: 10px;
+      padding: 25px 30px;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       text-align: right;
@@ -319,7 +320,7 @@
     #intro-form h3 {
       text-align: center;
       color: #2c3e50;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     
     #intro-form form {
@@ -331,13 +332,12 @@
     #intro-form label {
       font-weight: 500;
       color: #2c3e50;
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 0; /* לוודא שאין רווח נוסף */     
+      margin-bottom: 2px; /* לוודא שאין רווח נוסף */     
     }
     
     #intro-form input {
       width: 100%;
+      height: 34px; /* גובה שדה מוקטן */
       padding: 6px 10px;
       border: 1px solid #e0e6ed;
       border-radius: 6px;
@@ -355,13 +355,12 @@
     
     /*  מראה כפתור ההמשך */
     #continueBtn {
-      display: block;
       width: 100%;
       padding: 12px;
       background: #34495e;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -382,15 +381,13 @@
       background: #f8f9fa;
       border: 2px dashed #bdc3c7;
       border-radius: 12px;
-      padding: 10px;
-      text-align: justify; /* השורות יראו חלקות */
+      padding: 14px;
       text-align: center;
       color: #34495e;
       font-weight: 500;
       line-height: 1.8;
-      margin-bottom: 10px;
-      max-width: none; /* 🔹 שיבטל את ההגבלה הצרה */
-      white-space: normal; /* לוודא שלא שובר מילים באמצע */
+      margin-bottom: 16px;
+      white-space: pre-line; /* מאפשר ירידת שורה לפי <br> */
     }
     
     /* למובייל */
@@ -403,12 +400,6 @@
       #intro-form h3 {
         font-size: 18px;
       }
-    }
-
-    body:has(#intro-form) {
-      align-items: flex-start; /* ביטול המרכז האנכי */
-      justify-content: center; /* עדיין במרכז אופקי */
-      padding-top: 40px; /* רווח קטן מלמעלה */
     }
     
   </style>
