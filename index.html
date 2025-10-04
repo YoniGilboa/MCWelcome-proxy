@@ -702,6 +702,29 @@
         continueBtn.disabled = !allFilled;
       });
     });
+
+    // משתנה גלובלי לשמירת תשובות השאלון (יעודכן בהמשך ב chat.js עם סיכום שיחת הצ'אט לפני השליחה ל make)
+    window.userData = {};
+
+    document.getElementById('userForm').addEventListener('submit', function(e) {
+      e.preventDefault(); // לא נרצה רענון דף
+
+      // שמירת הנתונים
+      window.userData = {
+        full_name: document.getElementById('fullName').value.trim(),
+        business_name: document.getElementById('businessName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        current_date: new Date().toLocaleDateString('he-IL'),
+        conversation_summary: "טרם עודכן"
+      };
+
+      console.log("🧠 userData:", window.userData);
+
+      // מעבר מהשאלון לצ'אט
+      document.getElementById('intro-form').style.display = 'none';
+      document.getElementById('chat-container').style.display = 'block';
+    });
     
   </script>
 </body>
