@@ -1,3 +1,17 @@
+// Listning to notification from index.html on chat summary msg arrival to call make
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "summaryReady") {
+    console.log("✅ Summary received in chat.js:", event.data.payload);
+    // כאן תוכל אחר כך לקרוא ל-Make או לעשות כל פעולה אחרת
+    await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(args)
+    }, 10000);
+  }
+});
+
+
 const fetch = require("node-fetch");
 let threadId = null;
 module.exports = async function handler(req, res) {
