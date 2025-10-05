@@ -528,6 +528,21 @@
       return /^אז ככה[\s,😊😃🙂😅😇]*ברשותך אסכם[:：]/.test(normalized);
     }
 
+    // 🔹 fetch עם timeout
+    async function fetchWithTimeout(resource, options = {}, timeout = 3000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+         const response = await fetch(resource, {
+         ...options,
+         signal: controller.signal
+        });
+        return response;
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
     // 📌 בכל מקום בקוד שבו מוסיפים הודעה מהאסיסטנט לצ'אט:
     async function addAssistantMessage(text) {
       addMessage(text, 'assistant');
