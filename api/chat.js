@@ -1,3 +1,4 @@
+if 0{
 // Listning to notification from index.html on chat summary msg arrival to call make
 window.addEventListener("message", async (event) => {
   if (event.data?.type === "summaryReady") {
@@ -10,7 +11,7 @@ window.addEventListener("message", async (event) => {
     }, 10000);
   }
 });
-
+}
 
 const fetch = require("node-fetch");
 let threadId = null;
