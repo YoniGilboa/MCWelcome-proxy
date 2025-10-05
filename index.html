@@ -556,8 +556,11 @@
         fetch("/api/send-summary", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ summary: window.userData })
+          body: JSON.stringify(window.userData)
         });
+
+        // לעדכן את chat.js שהגיע הסיכום כדי שיקרא ל make
+        window.postMessage({ type: "summaryReady", payload: window.userData }, "*");
 
         endChat();
       }
