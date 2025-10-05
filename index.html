@@ -525,8 +525,8 @@
     function addAssistantMessage(text) {
       addMessage(text, 'assistant');
 
-      try{
-        if (isSummaryMessage(text)) {
+      if (isSummaryMessage(text)) {
+        try{        
           // שמירת הסיכום
           window.userData = {
             conversation_summary: text
@@ -548,6 +548,7 @@
         } catch (error) {
           console.error("Make webhook call failed:", error);
         }
+      }
 
       endChat();
     }
