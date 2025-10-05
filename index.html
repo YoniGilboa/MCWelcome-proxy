@@ -517,8 +517,15 @@
     });
 
     // פונקציה שמזהה הודעת סיכום
+    //function isSummaryMessage(text) {
+    //  return text.trim().startsWith("אז ככה, ברשותך אסכם:");
+    //}
+
     function isSummaryMessage(text) {
-      return text.trim().startsWith("אז ככה, ברשותך אסכם:");
+      if (!text) return false;
+      const normalized = text.trim().replace(/\s+/g, " ");
+      // בודק אם מתחיל בביטוי "אז ככה" עם או בלי אימוג'י/פסיקים/רווחים
+      return /^אז ככה[\s,😊😃🙂😅😇]*ברשותך אסכם[:：]/.test(normalized);
     }
 
     // 📌 בכל מקום בקוד שבו מוסיפים הודעה מהאסיסטנט לצ'אט:
