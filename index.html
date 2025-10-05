@@ -491,6 +491,8 @@
   </div>
 </div>
 
+<iframe id="chat-frame" src="chat.html"></iframe>
+
   <script>
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
@@ -560,7 +562,14 @@
         });
 
         // לעדכן את chat.js שהגיע הסיכום כדי שיקרא ל make
-        window.postMessage({ type: "summaryReady", payload: window.userData }, "*");
+        //window.postMessage({ type: "summaryReady", payload: window.userData }, "*");
+
+        const chatFrame = document.getElementById("chat-frame"); // או השם האמיתי של ה-iframe
+          chatFrame.contentWindow.postMessage(
+          { type: "summaryReady", payload: window.userData },
+          "*"
+      );
+
 
         endChat();
       }
