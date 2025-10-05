@@ -548,7 +548,22 @@
       addMessage(text, 'assistant');
 
       if (isSummaryMessage(text)) {
-        try{        
+        // שמירת הסיכום
+        window.userData = {
+          conversation_summary: text
+        };
+        
+        fetch("/api/send-summary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ summary: window.userData })
+        });
+
+        endChat();
+      }
+    }
+        
+        //try{        
           // שמירת הסיכום
           //window.userData = {
           //  conversation_summary: text
@@ -557,14 +572,14 @@
           // קריאה ל־Make
           //const MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3";
 
-          const testPayload = { test: "hello from chat" };
+          //const testPayload = { test: "hello from chat" };
 
           //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
-          const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(testPayload)
-          }, 10000);
+          //const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+          //  method: "POST",
+         //   headers: { "Content-Type": "application/json" },
+         //   body: JSON.stringify(testPayload)
+        //  }, 10000);
                     
           //const response = await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
           //  method: "POST",
@@ -573,18 +588,18 @@
           //  body: JSON.stringify(testPayload)            
           //});
 
-          console.log("✅ Sent to Make:", response.status);
-          if (!response.ok) {
-            console.error("❌ Make webhook returned error:", response.status);
-          }
+         // console.log("✅ Sent to Make:", response.status);
+        //  if (!response.ok) {
+        //    console.error("❌ Make webhook returned error:", response.status);
+        //  }
           
-          endChat();
+        //  endChat();
           
-        } catch (error) {
-          console.error("Make webhook call failed:", error);
-        }
-      }
-    }
+       // } catch (error) {
+       //   console.error("Make webhook call failed:", error);
+      //  }
+//      }
+  //  }
 
    // מחיקת הודעת פתיחה
    function removeWelcomeMessage() {
