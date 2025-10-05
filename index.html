@@ -552,12 +552,13 @@
           if (!response.ok) {
             console.error("❌ Make webhook returned error:", response.status);
           }
+          
+          endChat();
+          
         } catch (error) {
           console.error("Make webhook call failed:", error);
         }
       }
-
-      endChat();
     }
 
    // מחיקת הודעת פתיחה
