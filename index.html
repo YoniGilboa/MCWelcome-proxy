@@ -522,17 +522,35 @@
     }
 
     // 📌 בכל מקום בקוד שבו מוסיפים הודעה מהאסיסטנט לצ'אט:
-  function addAssistantMessage(text) {
-    addMessage(text, 'assistant');
-    if (isSummaryMessage(text)) {
-      // שמירת הסיכום ושליחה ל make
-      window.userData = {
-        conversation_summary: text
-      };
-            
+    function addAssistantMessage(text) {
+      addMessage(text, 'assistant');
+
+      try{
+        if (isSummaryMessage(text)) {
+          // שמירת הסיכום
+          window.userData = {
+            conversation_summary: text
+          };
+
+          // קריאה ל־Make
+          const MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3";
+
+          const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(window.userData)
+          });
+
+          console.log("✅ Sent to Make:", response.status);
+          if (!response.ok) {
+            console.error("❌ Make webhook returned error:", response.status);
+          }
+        } catch (error) {
+          console.error("Make webhook call failed:", error);
+        }
+
       endChat();
     }
-  }
 
    // מחיקת הודעת פתיחה
    function removeWelcomeMessage() {
