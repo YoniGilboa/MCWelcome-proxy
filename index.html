@@ -729,8 +729,7 @@
           opacity: 0;
           transform: translateY(-20px);
         }
-      }
-    `;
+      };
     document.head.appendChild(style);
 
     // מאזין לכל שדות החובה בשאלון
@@ -748,7 +747,7 @@
     // משתנה גלובלי לשמירת תשובות השאלון (יעודכן בהמשך ב chat.js עם סיכום שיחת הצ'אט לפני השליחה ל make)
     window.userData = {};
 
-    document.getElementById('userForm').addEventListener('submit', function(e) {
+    document.getElementById('userForm').addEventListener('submit', async function(e) {
       e.preventDefault(); // לא נרצה רענון דף
 
       // שמירת הנתונים
@@ -761,18 +760,17 @@
         conversation_summary: "טרם עודכן"
       };
 
+      console.log("🧠 userData:", window.userData);
+
       // שולח לשרת את כל הנתונים
       await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userMessage,
+          message: "התחלת שיחה חדשה",
           userData: window.userData
         })
-      }
-  });
-
-      console.log("🧠 userData:", window.userData);
+      });
 
       // מעבר מהשאלון לצ'אט
       document.getElementById('intro-form').style.display = 'none';
