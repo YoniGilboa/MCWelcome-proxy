@@ -292,27 +292,54 @@ module.exports = async function handler(req, res) {
       }
 
       // אם זו הודעת סיכום קרא ל make
-      try {
-        const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(window.userData)
-          //body: JSON.stringify("Hello World")
-        }, 10000);      
-        console.log("✅ called Make:", response.status);
-        if (!response.ok) {
-          console.error("❌ Make webhook returned error:", response.status);
-        }                 
-       } catch (error) {
-         console.error("Make webhook call failed:", error);
-       }      
-    }
+      module.exports = async function handler(req, res) {
+        if (req.method !== "POST") {
+          return res.status(405).json({ error: "Method not allowed" });
+        }
 
+        try {
+          const { message, userData } = req.body;        
+
+          if (message === "send_summary" && userData) {
+            try {
+              const response = await fetch("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+              });
+
+            console.log("✅ Make response:", response.status);
+            return res.status(200).json({ ok: true });
+          } catch (error) {
+            console.error("❌ Make webhook call failed:", error);
+            return res.status(500).json({ error: "Make webhook call failed" });
+          }
+        }
+        
+        // ---- אחרת, זה מסלול OpenAI ----
+        const openaiResponse = await fetch("https://api.openai.com/v1/...your_endpoint_here...", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+         });
+
+        const reply = await openaiResponse.json();
+        return res.status(200).json({ reply });
+
+        } catch (error) {
+          console.error("❌ General error:", error);
+          return res.status(500).json({ error: "Failed to handle request" });
+        }
+      };      
+        
     res.status(200).json({ reply });
   } catch (error) {
     console.error("Error calling OpenAI:", error);
     //res.status(500).json({ error: "Failed to fetch response" });
-    return new Response(JSON.stringify({ reset: true, error: "Failed to etch response" }), {
+    return new Response(JSON.stringify({ reset: true, error: "Failed to fetch response" }), {
         headers: { "Content-Type": "application/json" }
       });
   }
