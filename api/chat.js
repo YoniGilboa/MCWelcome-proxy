@@ -9,7 +9,8 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const { message } = req.body;
+  const { message, userData } = req.body;
+
   if (!message) {
     //return res.status(400).json({ error: "No message provided" });
     threadId = null;
@@ -292,13 +293,14 @@ module.exports = async function handler(req, res) {
       }
 
       // אם זו הודעת סיכום קרא ל make      
-      await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+      if (message === "send_summary" && userData) {
+        await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          //body: JSON.stringify(window.userData)
-          body: JSON.stringify("Hello Wrold")
+          body: JSON.stringify(userData)
         }, 10000);
       }
+    }
 
     res.status(200).json({ reply });
   } catch (error) {
