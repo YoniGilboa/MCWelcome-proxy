@@ -1,16 +1,3 @@
-// Listning to notification from index.html on chat summary msg arrival to call make
-window.addEventListener("message", async (event) => {
-  if (event.data?.type === "summaryReady") {
-    console.log("✅ Summary received in chat.js:", event.data.payload);
-    // כאן תוכל אחר כך לקרוא ל-Make או לעשות כל פעולה אחרת
-    await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(event.data.payload)
-    }, 10000);
-  }
-});
-
 const fetch = require("node-fetch");
 let threadId = null;
 module.exports = async function handler(req, res) {
@@ -173,7 +160,7 @@ module.exports = async function handler(req, res) {
     const run = await runResponse.json();
     const runId = run.id;
 
-        // Step 4: Poll for completion
+    // Step 4: Poll for completion
     let runStatus = run.status;
     let attempts = 0;
     const maxAttempts = 30; // 30 seconds timeout
@@ -303,7 +290,15 @@ module.exports = async function handler(req, res) {
           reply = textContent.text.value;
         }
       }
-    }
+
+      // אם זו הודעת סיכום קרא ל make      
+      await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          //body: JSON.stringify(window.userData)
+          body: JSON.stringify("Hello Wrold")
+        }, 10000);
+      }
 
     res.status(200).json({ reply });
   } catch (error) {
