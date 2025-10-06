@@ -73,7 +73,9 @@ module.exports = async function handler(req, res) {
 
     // אם יש שגיאה שה-thread נעול בגלל run פעיל → פותחים thread חדש
     if (!messageResponse.ok) {
-      const errorText = await messageResponse.text();
+      const errorData = await messageResponse.json().catch(() => ({}));
+      const errorText = JSON.stringify(errorData);
+      
       console.error("Message creation failed:", errorText);
 
       if (errorText.includes("while a run") && errorText.includes("is active")) {
