@@ -73,9 +73,7 @@ module.exports = async function handler(req, res) {
 
     // אם יש שגיאה שה-thread נעול בגלל run פעיל → פותחים thread חדש
     if (!messageResponse.ok) {
-      const errorData = await messageResponse.json().catch(() => ({}));
-      const errorText = JSON.stringify(errorData);
-      
+      const errorText = await messageResponse.text();
       console.error("Message creation failed:", errorText);
 
       if (errorText.includes("while a run") && errorText.includes("is active")) {
@@ -295,7 +293,7 @@ module.exports = async function handler(req, res) {
       }
 
       // אם זו הודעת סיכום קרא ל make      
-      if (userData) {
+      if (message === "send_summary" && userData) {
         await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
