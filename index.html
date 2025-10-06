@@ -761,6 +761,17 @@
         conversation_summary: "טרם עודכן"
       };
 
+      // שולח לשרת את כל הנתונים
+      await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: "send_userData",
+          userData: window.userData
+        })
+      }
+  });
+
       console.log("🧠 userData:", window.userData);
 
       // מעבר מהשאלון לצ'אט
