@@ -291,14 +291,22 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      // אם זו הודעת סיכום קרא ל make      
-      await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+      // אם זו הודעת סיכום קרא ל make
+      try {
+        await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
           method: "POST",
           headers: { "Content-Type": "application/json" },
           //body: JSON.stringify(window.userData)
-          body: JSON.stringify("Hello Wrold")
-        }, 10000);
-      }
+          body: JSON.stringify("Hello World")
+        }, 10000);      
+        console.log("✅ called Make:", response.status);
+        if (!response.ok) {
+          console.error("❌ Make webhook returned error:", response.status);
+        }                 
+       } catch (error) {
+         console.error("Make webhook call failed:", error);
+       }      
+    }
 
     res.status(200).json({ reply });
   } catch (error) {
