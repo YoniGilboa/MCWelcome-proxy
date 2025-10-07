@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const { message, userData } = req.body;
+  const userData = req.body;
 
   if (!message) {
     //return res.status(400).json({ error: "No message provided" });
@@ -313,7 +313,7 @@ module.exports = async function handler(req, res) {
 };
 
 // Step 6: קריאה ל make בסיום הצאט
-    let userData = null;
+    //let userData = null;
 
     //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
     async function callMake(data) {
