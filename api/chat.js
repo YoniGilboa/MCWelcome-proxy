@@ -310,16 +310,16 @@ module.exports = async function handler(req, res) {
       userData = data;
       console.log("📩 userData loaded into chat.js:", userData);
       
-      try {
-        const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData)
-        }, 10000);
-        console.log("✅ Data sent to Make");
-      } catch (err) {
-        console.error("❌ Error sending to Make:", err);
-      }
+     // try {
+        //const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+        //  method: "POST",
+        //  headers: { "Content-Type": "application/json" },
+         // body: JSON.stringify(userData)
+       // }, 10000);
+       // console.log("✅ Data sent to Make");
+     // } catch (err) {
+      //  console.error("❌ Error sending to Make:", err);
+    //  }
     }
        
       //userData = data;
