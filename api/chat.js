@@ -293,13 +293,13 @@ module.exports = async function handler(req, res) {
       }
 
       // אם זו הודעת סיכום קרא ל make      
-      if (message === "send_summary" && userData) {
-        await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData)
-        }, 10000);
-      }
+      //if (message === "send_summary" && userData) {
+      //  await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+      //    method: "POST",
+      //    headers: { "Content-Type": "application/json" },
+      //    body: JSON.stringify(userData)
+      //  }, 10000);
+      //}
     }
 
     res.status(200).json({ reply });
