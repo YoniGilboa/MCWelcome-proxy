@@ -510,7 +510,15 @@
       backContainer.style.display = "block";  // מציג את הכפתור לחזרה
 
       // 🟢 שליחת נתונים ל chat.js שיקרא ל make ויצירת טריגר לשליחתם, כי נגמר הצאט
-      callMake(window.userData);
+      //callMake(window.userData);
+
+      //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
+      await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(window.userData)
+      }, 10000);
+      
     }
     
     // מאזין ללחיצה על הכפתור
