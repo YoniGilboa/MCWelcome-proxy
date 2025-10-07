@@ -293,13 +293,32 @@ module.exports = async function handler(req, res) {
       }
 
       // אם זו הודעת סיכום קרא ל make      
-      //if (message === "send_summary" && userData) {
-      //  await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-      //    method: "POST",
-      //    headers: { "Content-Type": "application/json" },
-      //    body: JSON.stringify(userData)
-      //  }, 10000);
-      //}
+      if (message === "send_summary" && userData) {
+        await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData)
+        }, 10000);
+      }
+    }
+
+    // Step 6: קריאה ל make בסיום הצאט
+    let userData = null;
+
+    //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
+    function callMake(data) {
+      userData = data;
+      console.log("📩 userData loaded into chat.js:", userData);
+
+      // קריאה ל־Make עם timeout של 3 שניות
+      const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
+
+      //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
+      //await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+      //  method: "POST",
+      //  headers: { "Content-Type": "application/json" },
+      //  body: JSON.stringify(userData)
+     // }, 10000);
     }
 
     res.status(200).json({ reply });
@@ -311,37 +330,3 @@ module.exports = async function handler(req, res) {
       });
   }
 };
-
-// Step 6: קריאה ל make בסיום הצאט
-    let userData = null;
-
-    //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
-    async function callMake(data) {
-      userData = data;
-      console.log("📩 userData loaded into chat.js:", userData);
-      
-      try {
-        const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData)
-        }, 10000);
-        console.log("✅ Data sent to Make");
-      } catch (err) {
-        console.error("❌ Error sending to Make:", err);
-      }
-    }
-       
-      //userData = data;
-      //console.log("📩 userData loaded into chat.js:", userData);
-
-      // קריאה ל־Make עם timeout של 3 שניות
-      //const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
-
-      //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
-      //await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-      //  method: "POST",
-      //  headers: { "Content-Type": "application/json" },
-      //  body: JSON.stringify(userData)
-     // }, 10000);
-    }
