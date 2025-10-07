@@ -302,17 +302,7 @@ module.exports = async function handler(req, res) {
       //}
     }
 
-    res.status(200).json({ reply });
-  } catch (error) {
-    console.error("Error calling OpenAI:", error);
-    //res.status(500).json({ error: "Failed to fetch response" });
-    return new Response(JSON.stringify({ reset: true, error: "Failed to etch response" }), {
-        headers: { "Content-Type": "application/json" }
-      });
-  }
-};
-
-// Step 6: קריאה ל make בסיום הצאט
+    // Step 6: קריאה ל make בסיום הצאט
     //let userData = null;
 
     //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
@@ -344,4 +334,13 @@ module.exports = async function handler(req, res) {
       //  headers: { "Content-Type": "application/json" },
       //  body: JSON.stringify(userData)
      // }, 10000);
-    }
+
+    res.status(200).json({ reply });
+  } catch (error) {
+    console.error("Error calling OpenAI:", error);
+    //res.status(500).json({ error: "Failed to fetch response" });
+    return new Response(JSON.stringify({ reset: true, error: "Failed to etch response" }), {
+        headers: { "Content-Type": "application/json" }
+      });
+  }
+};
