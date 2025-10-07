@@ -314,11 +314,11 @@ module.exports = async function handler(req, res) {
       const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
 
       //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
-      await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData)
-      }, 10000);
+      //await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+      //  method: "POST",
+      //  headers: { "Content-Type": "application/json" },
+      //  body: JSON.stringify(userData)
+     // }, 10000);
     }
 
     res.status(200).json({ reply });
