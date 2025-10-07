@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const userData = req.body;
+  const { message, userData } = req.body;
 
   if (!message) {
     //return res.status(400).json({ error: "No message provided" });
@@ -214,11 +214,11 @@ module.exports = async function handler(req, res) {
                 console.log("Function call args:", args, JSON.stringify(args, null, 2));
 
                 //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
-                //await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-                //  method: "POST",
-                //  headers: { "Content-Type": "application/json" },
-                //  body: JSON.stringify(args)
-               // }, 10000);
+                await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(args)
+                }, 10000);
                 
                 //Debug calling Make
                 console.log("Make response status:", response.status);
@@ -302,24 +302,34 @@ module.exports = async function handler(req, res) {
       //}
     }
 
-    // Step 6: קריאה ל make בסיום הצאט
-    //let userData = null;
+    res.status(200).json({ reply });
+  } catch (error) {
+    console.error("Error calling OpenAI:", error);
+    //res.status(500).json({ error: "Failed to fetch response" });
+    return new Response(JSON.stringify({ reset: true, error: "Failed to etch response" }), {
+        headers: { "Content-Type": "application/json" }
+      });
+  }
+};
+
+// Step 6: קריאה ל make בסיום הצאט
+    let userData = null;
 
     //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
-    //async function callMake(data) {
-      //userData = data;
-      //console.log("📩 userData loaded into chat.js:", userData);
+    async function callMake(data) {
+      userData = data;
+      console.log("📩 userData loaded into chat.js:", userData);
       
-     // try {
-        //const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-        //  method: "POST",
-        //  headers: { "Content-Type": "application/json" },
-         // body: JSON.stringify(userData)
-       // }, 10000);
-       // console.log("✅ Data sent to Make");
-     // } catch (err) {
-      //  console.error("❌ Error sending to Make:", err);
-    //  }
+      try {
+        const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData)
+        }, 10000);
+        console.log("✅ Data sent to Make");
+      } catch (err) {
+        console.error("❌ Error sending to Make:", err);
+      }
     }
        
       //userData = data;
@@ -334,13 +344,4 @@ module.exports = async function handler(req, res) {
       //  headers: { "Content-Type": "application/json" },
       //  body: JSON.stringify(userData)
      // }, 10000);
-
-    res.status(200).json({ reply });
-  } catch (error) {
-    console.error("Error calling OpenAI:", error);
-    //res.status(500).json({ error: "Failed to fetch response" });
-    return new Response(JSON.stringify({ reset: true, error: "Failed to etch response" }), {
-        headers: { "Content-Type": "application/json" }
-      });
-  }
-};
+    }
