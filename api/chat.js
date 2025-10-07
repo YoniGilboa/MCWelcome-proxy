@@ -214,11 +214,11 @@ module.exports = async function handler(req, res) {
                 console.log("Function call args:", args, JSON.stringify(args, null, 2));
 
                 //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
-                await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(args)
-                }, 10000);
+                //await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+                //  method: "POST",
+                //  headers: { "Content-Type": "application/json" },
+                //  body: JSON.stringify(args)
+               // }, 10000);
                 
                 //Debug calling Make
                 console.log("Make response status:", response.status);
@@ -306,9 +306,9 @@ module.exports = async function handler(req, res) {
     //let userData = null;
 
     //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
-    async function callMake(data) {
-      userData = data;
-      console.log("📩 userData loaded into chat.js:", userData);
+    //async function callMake(data) {
+      //userData = data;
+      //console.log("📩 userData loaded into chat.js:", userData);
       
      // try {
         //const response = await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
