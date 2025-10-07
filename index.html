@@ -516,11 +516,6 @@
       window.location.href = "https://mind-channel-pro-site.webflow.io/";  // מחזיר לאתר Webflow
     });
 
-    // פונקציה שמזהה הודעת סיכום
-    //function isSummaryMessage(text) {
-    //  return text.trim().startsWith("אז ככה, ברשותך אסכם:");
-    //}
-
     function isSummaryMessage(text) {
       if (!text) return false;
       const normalized = text.trim().replace(/\s+/g, " ");
@@ -763,15 +758,18 @@
 
       console.log("🧠 userData:", window.userData);
 
+      // 🟢 שולח את הנתונים ל-chat.js כדי לשמור אותם שם
+      initChat(window.userData);
+
       // שולח לשרת את כל הנתונים
-      await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: "התחלת שיחה חדשה",
-          userData: window.userData
-        })
-      });
+      //await fetch("/api/chat", {
+      //  method: "POST",
+      //  headers: { "Content-Type": "application/json" },
+      //  body: JSON.stringify({
+      //    message: "התחלת שיחה חדשה",
+      //    userData: window.userData
+      //  })
+     // });
 
       // מעבר מהשאלון לצ'אט
       document.getElementById('intro-form').style.display = 'none';
