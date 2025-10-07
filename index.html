@@ -505,12 +505,19 @@
     const backBtn = document.getElementById("back-btn");
 
     // פונקציה לסיים שיחה
-    function endChat() {      
+   async function endChat() {      
       inputContainer.style.display = "none";  // חוסם את תיבת ההקלדה
       backContainer.style.display = "block";  // מציג את הכפתור לחזרה
 
       // 🟢 שליחת נתונים ל chat.js שיקרא ל make ויצירת טריגר לשליחתם, כי נגמר הצאט
-      callMake(window.userData);
+      //callMake(window.userData);
+
+      //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
+      await fetchWithTimeout2("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData)
+      }, 10000);
     }
     
     // מאזין ללחיצה על הכפתור
@@ -527,7 +534,7 @@
     }
 
     // 🔹 fetch עם timeout
-    async function fetchWithTimeout(resource, options = {}, timeout = 3000) {
+    async function fetchWithTimeout2(resource, options = {}, timeout = 3000) {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), timeout);
       try {
