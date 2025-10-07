@@ -508,6 +508,9 @@
     function endChat() {      
       inputContainer.style.display = "none";  // חוסם את תיבת ההקלדה
       backContainer.style.display = "block";  // מציג את הכפתור לחזרה
+
+      // 🟢 שליחת נתונים ל chat.js שיקרא ל make ויצירת טריגר לשליחתם, כי נגמר הצאט
+      callMake(window.userData);
     }
     
     // מאזין ללחיצה על הכפתור
@@ -757,9 +760,6 @@
       };
 
       console.log("🧠 userData:", window.userData);
-
-      // 🟢 שולח את הנתונים ל-chat.js כדי לשמור אותם שם
-      initChat(window.userData);
 
       // שולח לשרת את כל הנתונים
       //await fetch("/api/chat", {
