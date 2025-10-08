@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  //const { message, userData } = req.body;
+  const { message, userData } = req.body;
 
   if (!message) {
     //return res.status(400).json({ error: "No message provided" });
@@ -293,25 +293,25 @@ module.exports = async function handler(req, res) {
       }
 
       // אם זו הודעת סיכום קרא ל make      
-     // if (message === "send_summary" && userData) {
-      //  await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
-      //    method: "POST",
-      //    headers: { "Content-Type": "application/json" },
-      //    body: JSON.stringify(userData)
-      //  }, 10000);
+      if (message === "send_summary" && userData) {
+        await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData)
+        }, 10000);
       }
-   // }
+    }
 
     // Step 6: קריאה ל make בסיום הצאט
-    //let userData = null;
+    let userData = null;
 
     //  נקראת מ index.html בסוף הצאט לאפשר גישה ל userData שמכיל את התשובות לשאלון וסיכום הצאט של האסיסטנט
-    //function callMake(data) {
-    //  userData = data;
-    //  console.log("📩 userData loaded into chat.js:", userData);
+    function callMake(data) {
+      userData = data;
+      console.log("📩 userData loaded into chat.js:", userData);
 
       // קריאה ל־Make עם timeout של 3 שניות
-    //  const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
+      const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
 
       //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
       //await fetchWithTimeout("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
@@ -319,7 +319,7 @@ module.exports = async function handler(req, res) {
       //  headers: { "Content-Type": "application/json" },
       //  body: JSON.stringify(userData)
      // }, 10000);
-    //}
+    }
 
     res.status(200).json({ reply });
   } catch (error) {
