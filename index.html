@@ -560,11 +560,17 @@
 
         console.log("userData sent to webhook:", JSON.stringify(userData, null, 2));
 
-        fetch("https://webhook.site/b7286379-6a76-41a7-b449-4fa0e5fb89fa", {
+        fetch("/api/sendToMake", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userData)
         });
+
+        //fetch("https://webhook.site/b7286379-6a76-41a7-b449-4fa0e5fb89fa", {
+        //  method: "POST",
+        //  headers: { "Content-Type": "application/json" },
+        //  body: JSON.stringify(userData)
+       // });
 
         endChat();
       }
