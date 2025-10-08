@@ -300,7 +300,7 @@ module.exports = async function handler(req, res) {
       //    body: JSON.stringify(userData)
       //  }, 10000);
       }
-    }
+   // }
 
     // Step 6: קריאה ל make בסיום הצאט
     //let userData = null;
