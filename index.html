@@ -97,6 +97,7 @@
 
     .user {
       justify-content: flex-end;
+      flex-direction: row-reverse; /* הופך את סדר האווטאר והבועה */
     }
 
     .user .message-content {
@@ -169,11 +170,15 @@
     .user-avatar {
       background: #34495e;
       color: white;
+      margin-left: 10px; /* רווח בין האווטאר לבועה */
+      margin-right: 0;      
     }
 
     .assistant-avatar {
       background: #27ae60;
       color: white;
+      margin-right: 10px; /* רווח רגיל עבור העוזר */
+      margin-left: 0;
     }
 
     .input-container {
@@ -479,12 +484,13 @@
       <div id="back-container" style="display: none; text-align:center; margin-top: 20px;">
         <button id="back-btn" style="
           padding: 10px 20px;
-          background-color: #4CAF50;
+          background-color: #34495e;
           border: none;
           color: white;
           font-size: 16px;
           border-radius: 8px;
-          cursor: pointer;">
+          cursor: pointer;
+          margin-bottom: 10px;">
           חזרה לאתר
         </button>
       </div>
