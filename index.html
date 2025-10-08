@@ -505,19 +505,19 @@
     const backBtn = document.getElementById("back-btn");
 
     // פונקציה לסיים שיחה
-   async function endChat() {      
+   function endChat() {      
       inputContainer.style.display = "none";  // חוסם את תיבת ההקלדה
-      backContainer.style.display = "block";  // מציג את הכפתור לחזרה
+      backContainer.style.display = "block";  // מציג את הכפתור לחזרה   
 
       // 🟢 שליחת נתונים ל chat.js שיקרא ל make ויצירת טריגר לשליחתם, כי נגמר הצאט
       //callMake(window.userData);
 
       //await fetchWithTimeout(process.env.MAKE_WEBHOOK_URL, {
-      await fetchWithTimeout2("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(window.userData)
-      }, 10000);
+      //await fetchWithTimeout2("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {      
+      //  method: "POST",
+      //  headers: { "Content-Type": "application/json" },
+      //  body: JSON.stringify(window.userData)
+      //}, 10000);
     }
     
     // מאזין ללחיצה על הכפתור
@@ -554,9 +554,15 @@
 
       if (isSummaryMessage(text)) {
         // שמירת הסיכום
-        window.userData = {
+        userData = {
           conversation_summary: text
         };
+
+        fetch("https://webhook.site/b7286379-6a76-41a7-b449-4fa0e5fb89fa", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData)
+        });
 
         endChat();
       }
@@ -751,13 +757,14 @@
     });
 
     // משתנה גלובלי לשמירת תשובות השאלון (יעודכן בהמשך ב chat.js עם סיכום שיחת הצ'אט לפני השליחה ל make)
-    window.userData = {};
+    //window.userData = {};
+    userData = {};
 
     document.getElementById('userForm').addEventListener('submit', async function(e) {
       e.preventDefault(); // לא נרצה רענון דף
 
       // שמירת הנתונים
-      window.userData = {
+      userData = {
         full_name: document.getElementById('fullName').value.trim(),
         business_name: document.getElementById('businessName').value.trim(),
         email: document.getElementById('email').value.trim(),
@@ -766,7 +773,8 @@
         conversation_summary: "טרם עודכן"
       };
 
-      console.log("🧠 userData:", window.userData);
+      //console.log("🧠 userData:", window.userData);
+      console.log("🧠 userData:", userData);
 
       // שולח לשרת את כל הנתונים
       //await fetch("/api/chat", {
