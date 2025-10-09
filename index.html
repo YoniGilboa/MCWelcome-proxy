@@ -314,11 +314,6 @@
       }
     }
 
-    /* RTL specific adjustments */
-    //.user {
-    //  flex-direction: row;
-   // }
-
     .assistant {
       flex-direction: row-reverse;
     }
@@ -726,13 +721,22 @@
   sendBtn.addEventListener('click', sendMessage);
 
   userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey && !sendBtn.disabled) {
-      e.preventDefault();   // שולח במקום ירידת שורה
-      sendMessage();
-    } else if (e.key === 'Enter' && e.shiftKey) {
-      e.stopPropagation();  // מוסיף שורה
+    // מאפשרים ירידת שורה בלי שלוח הודעה לצאט :Enter או Enter+Shift 
+    if (e.key === 'Enter' && !e.shiftKey) {
+      // לא שולח כלום, רק ירידת שורה רגילה
+      return;
     }
   });
+
+
+  //userInput.addEventListener('keydown', (e) => {
+  //  if (e.key === 'Enter' && !e.shiftKey && !sendBtn.disabled) {
+   //   e.preventDefault();   // שולח במקום ירידת שורה
+  //    sendMessage();
+  //  } else if (e.key === 'Enter' && e.shiftKey) {
+  //    e.stopPropagation();  // מוסיף שורה
+  //  }
+//  });
 
     // Auto resize textarea
     userInput.addEventListener('input', () => {
