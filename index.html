@@ -95,6 +95,7 @@
       position: relative;
       word-wrap: break-word;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      white-space: pre-line;
     }
 
     .user {
@@ -664,8 +665,7 @@
   }
 
     async function sendMessage() {
-    //const message = userInput.value.trim();
-    const message = userInput.value.replace(/^\s+|\s+$/g, '');  // מנקה רק רווחים מהקצוות, לא שוברי שורה
+    const message = userInput.value.trim();
     if (!message) return;
 
     updateSendButton(true);
