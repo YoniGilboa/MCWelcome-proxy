@@ -728,10 +728,10 @@
       updateSendButton(true);
       userInput.disabled = true;
 
-      addMessage(message, 'user');
+      //addMessage(message, 'user');
       userInput.value = '';
 
-      //const loadingMsg = addMessage('', 'loading', false);
+      const loadingMsg = addMessage('', 'loading', false);
 
       try {
         const response = await fetch('/api/chat', {
@@ -752,7 +752,7 @@
           return;
         }
 
-        //loadingMsg.style.animation = 'slideOut 0.3s ease-in';
+        loadingMsg.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => loadingMsg.remove(), 300);
 
         setTimeout(() => {
