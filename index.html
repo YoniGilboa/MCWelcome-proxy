@@ -720,6 +720,61 @@
     }
   }
 
+    // נקראת פעם אחת במעבר מהשאלון לצאט - לא מציגה את הודעת ה user המדומה
+    async function sendHiddenMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      updateSendButton(true);
+      userInput.disabled = true;
+
+      //addMessage(message, 'user');
+      userInput.value = '';
+
+      //const loadingMsg = addMessage('', 'loading', false);
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, threadId })
+        });
+
+        const data = await response.json();
+
+        if (data.threadId && !threadId) {
+          threadId = data.threadId;
+          console.log("🧵 Thread initialized:", threadId);
+        }
+
+        if (data.reset) {
+          resetChatUI();
+          return;
+        }
+
+        loadingMsg.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => loadingMsg.remove(), 300);
+
+        setTimeout(() => {
+          if (response.ok) {
+            const replyText = data.reply || data.conversation_summary || "אין תשובה זמינה כרגע";
+            addAssistantMessage(replyText);
+          } else {
+            addAssistantMessage(`⚠️ שגיאה: ${data.error || 'לא הצלחנו לקבל תשובה מהשרת'}`);
+          }
+        }, 500);
+
+      } catch (err) {
+        console.error('Connection error:', err);
+        if (loadingMsg.parentNode) loadingMsg.remove();
+        addAssistantMessage('❌ שגיאה: לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.');
+      } finally {
+      updateSendButton(false);
+      userInput.disabled = false;
+      userInput.focus();
+    }
+  }
+
   // מאזינים
   sendBtn.addEventListener('click', sendMessage);
 
@@ -806,7 +861,7 @@
 
       // שולח הודעת user מדומה
       userInput.value = "שלום";
-      sendMessage();     
+      sendHiddenMessage();
     });
     
   </script>
