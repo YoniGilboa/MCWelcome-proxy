@@ -566,10 +566,7 @@
 
       if (isSummaryMessage(text)) {
         // שמירת הסיכום
-        userData = {
-          conversation_summary: text
-        };
-
+        userData.conversation_summary = text;
         endChat();
       }
     }
