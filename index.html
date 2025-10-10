@@ -427,11 +427,13 @@
   <div id="intro-form">
    <div id="intro-box">
       <div class="welcome-message">
-        שלום וברוך הבא ל - Mind Channel 🌟<br>
-        אנחנו כאן כדי לעזור לך לגלות איך אפשר לייעל את העסק שלך<br>
+        שלום וברוכים הבאים ל - Mind Channel 🌟<br>
+        אנחנו כאן כדי לעזור לכם לגלות איך תוכלו לייעל את העסק שלכם<br>
         בעזרת פתרונות חכמים משולבי AI.<br>
-        כדי שנוכל להתאים את ההמלצות בדיוק עבורך נתחיל בכמה שאלות קצרות<br>
-        ונמשיך בשיחה שתעזור לנו להבין קצת את האתגרים שיש לך.
+        כדי שנוכל להתאים את ההמלצות בדיוק עבורכם<br>
+        אנא מלאו את הפרטים מטה ולחצו 'המשך'.<br>
+        MCWelcome ישוחח איתכם,<br>
+        נשמח אם תשתפו אותו באתגרים שלכם - אנחנו נדאג לפתרונות...
       </div>
     </div>
     
@@ -801,6 +803,10 @@
       // מעבר מהשאלון לצ'אט
       document.getElementById('intro-form').style.display = 'none';
       document.getElementById('chat-container').style.display = 'block';
+
+      // שולח הודעת user מדומה
+      userInput.value = "שלום";
+      sendMessage();     
     });
     
   </script>
