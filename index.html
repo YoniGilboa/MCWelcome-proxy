@@ -509,22 +509,19 @@
     const inputContainer = document.querySelector(".input-container");
     const backContainer = document.getElementById("back-container");
     const backBtn = document.getElementById("back-btn");
+    let userData = {};
 
     // פונקציה לסיים שיחה
    function endChat() {      
       inputContainer.style.display = "none";  // חוסם את תיבת ההקלדה
       backContainer.style.display = "block";  // מציג את הכפתור לחזרה   
 
-     
       //fetch("https://webhook.site/b7286379-6a76-41a7-b449-4fa0e5fb89fa", {
       //  method: "POST",
       //  headers: { "Content-Type": "application/json" },
         //body: JSON.stringify(userData)
       //  body: JSON.stringify({ message: "Hello World"})
     //  });
-     
-      // 🟢 שליחת נתונים ל chat.js שיקרא ל make ויצירת טריגר לשליחתם, כי נגמר הצאט
-      //callMake(window.userData);
 
       //await fetchWithTimeout2("https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3", {
       fetch("https://hook.eu2.make.com/5xnwgg56nly6i9hceopl7y56ajo2iwds", {
@@ -572,14 +569,6 @@
         userData = {
           conversation_summary: text
         };
-
-        //console.log("userData sent to webhook:", JSON.stringify(userData, null, 2));
-
-        //fetch("/api/sendToMake", {
-        //  method: "POST",
-        //  headers: { "Content-Type": "application/json" },
-        //  body: JSON.stringify(userData)
-       // });
 
         endChat();
       }
@@ -827,13 +816,9 @@
       });
     });
 
-    // משתנה גלובלי לשמירת תשובות השאלון (יעודכן בהמשך ב chat.js עם סיכום שיחת הצ'אט לפני השליחה ל make)
-    //window.userData = {};
-    userData = {};
-
     document.getElementById('userForm').addEventListener('submit', async function(e) {
       e.preventDefault(); // לא נרצה רענון דף
-
+      
       // שמירת הנתונים
       userData = {
         full_name: document.getElementById('fullName').value.trim(),
@@ -844,18 +829,7 @@
         conversation_summary: "טרם עודכן"
       };
 
-      //console.log("🧠 userData:", window.userData);
       console.log("🧠 userData:", userData);
-
-      // שולח לשרת את כל הנתונים
-      //await fetch("/api/chat", {
-      //  method: "POST",
-      //  headers: { "Content-Type": "application/json" },
-      //  body: JSON.stringify({
-      //    message: "התחלת שיחה חדשה",
-      //    userData: window.userData
-      //  })
-     // });
 
       // מעבר מהשאלון לצ'אט
       document.getElementById('intro-form').style.display = 'none';
