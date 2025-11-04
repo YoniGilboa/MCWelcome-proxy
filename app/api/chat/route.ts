@@ -1,13 +1,6 @@
 import { OpenAI } from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const assistantId = process.env.OPENAI_ASSISTANT_ID || '';
-const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL || 'https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3';
-
 // Helper function for fetch with timeout
 async function fetchWithTimeout(resource: string, options: RequestInit = {}, timeout = 10000) {
   const controller = new AbortController();
@@ -26,6 +19,20 @@ async function fetchWithTimeout(resource: string, options: RequestInit = {}, tim
 
 export async function POST(req: NextRequest) {
   try {
+    // Initialize OpenAI client and config inside the request handler
+    const apiKey = process.env.OPENAI_API_KEY;
+    const assistantId = process.env.OPENAI_ASSISTANT_ID || '';
+    const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL || 'https://hook.eu2.make.com/35i403axct5gyl2xskvrpjmjflby8rg3';
+
+    if (!apiKey || !assistantId) {
+      return NextResponse.json(
+        { error: 'Server configuration error: Missing OpenAI credentials' },
+        { status: 500 }
+      );
+    }
+
+    const openai = new OpenAI({ apiKey });
+
     const { message, threadId, userData, resetThread, fileIds } = await req.json();
 
     // Reset thread if requested
