@@ -12,7 +12,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
 
 function SignInForm() {
-  const router = useRouter()
+  const _router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/solutions'
 

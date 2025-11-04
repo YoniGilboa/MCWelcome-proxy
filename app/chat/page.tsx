@@ -157,7 +157,7 @@ export default function ChatPage() {
           textareaRef.current.style.height = '52px';
           textareaRef.current.style.overflowY = 'hidden';
         }
-      } catch (e) {
+      } catch (_e) {
         // ignore DOM errors in non-browser contexts
       }
       // ensure we scroll to bottom after message and assistant reply

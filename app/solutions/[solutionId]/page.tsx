@@ -16,7 +16,7 @@ export default function SolutionPage() {
   const router = useRouter();
   const solutionId = params.solutionId as string;
   
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [_user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
   const [solution, setSolution] = useState<any>(null);

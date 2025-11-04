@@ -131,12 +131,12 @@ export default function DashboardPage() {
     }
   };
 
-  const getIconForSolution = (iconString: string | null, solutionId: string) => {
-    if (iconString && iconString !== '') {
-      return <span className="text-4xl">{iconString}</span>;
+  const _getIconForSolution = (_iconString: string | null, _solutionId: string) => {
+    if (_iconString && _iconString !== '') {
+      return <span className="text-4xl">{_iconString}</span>;
     }
     
-    switch (solutionId) {
+    switch (_solutionId) {
       case 'customer-database':
         return <Users className="w-10 h-10" />;
       case 'reels-creation':

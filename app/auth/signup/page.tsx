@@ -12,7 +12,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, User, Loader2, ArrowRight } from 'lucide-react'
 
 export default function SignUp() {
-  const router = useRouter()
+  const _router = useRouter()
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -28,7 +28,7 @@ export default function SignUp() {
     setMessage(null)
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data: _data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
