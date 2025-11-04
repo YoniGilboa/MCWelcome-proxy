@@ -1,5 +1,9 @@
 'use client';
 
+// Prevent static generation - this page needs runtime data
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';

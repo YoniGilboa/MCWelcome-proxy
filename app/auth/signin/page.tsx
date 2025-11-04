@@ -1,5 +1,9 @@
 'use client'
 
+// Prevent static generation - this page needs runtime data
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 import { useState, Suspense } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'

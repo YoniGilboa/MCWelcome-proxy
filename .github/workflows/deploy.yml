@@ -1,9 +1,10 @@
 name: Deploy to Production
 
+# Uncomment when ready to deploy with Vercel
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only for now
+  # push:
+  #   branches: [ main ]
 
 jobs:
   deploy:
