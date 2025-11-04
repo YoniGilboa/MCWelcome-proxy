@@ -65,7 +65,7 @@ export default function UsersPage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null);
     });
 
@@ -88,8 +88,8 @@ export default function UsersPage() {
         .select('*');
 
       // Combine auth users with profiles
-      const combinedUsers: UserProfile[] = (authUsers || []).map(authUser => {
-        const profile = profiles?.find(p => p.user_id === authUser.id);
+      const combinedUsers: UserProfile[] = (authUsers || []).map((authUser: any) => {
+        const profile = profiles?.find((p: any) => p.user_id === authUser.id);
         return {
           id: authUser.id,
           email: authUser.email || '',

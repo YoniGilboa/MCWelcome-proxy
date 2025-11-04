@@ -63,7 +63,7 @@ export default function AdminDashboard() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null);
     });
 
@@ -90,11 +90,11 @@ export default function AdminDashboard() {
 
       // Calculate active users (users with at least one approved solution)
       const activeUserIds = new Set(
-        userSolutions?.filter(us => us.status === 'approved').map(us => us.user_id) || []
+        userSolutions?.filter((us: any) => us.status === 'approved').map((us: any) => us.user_id) || []
       );
 
       // Count pending approvals
-      const pendingCount = userSolutions?.filter(us => us.status === 'pending').length || 0;
+      const pendingCount = userSolutions?.filter((us: any) => us.status === 'pending').length || 0;
 
       setStats({
         totalUsers: totalUsers || 0,

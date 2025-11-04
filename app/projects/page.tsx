@@ -61,7 +61,7 @@ export default function ProjectsPage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null);
     });
 
@@ -90,7 +90,7 @@ export default function ProjectsPage() {
 
       if (error) throw error;
 
-      const formattedProjects = (data || []).map(item => ({
+      const formattedProjects = (data || []).map((item: any) => ({
         id: item.id,
         user_id: item.user_id,
         solution_id: item.solution_id,

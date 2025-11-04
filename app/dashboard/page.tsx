@@ -66,7 +66,7 @@ export default function DashboardPage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null);
     });
 
@@ -91,9 +91,9 @@ export default function DashboardPage() {
 
       if (userSolutionsError) throw userSolutionsError;
 
-      const approvedSolutionIds = userSolutions?.map(us => us.solution_id) || [];
+      const approvedSolutionIds = userSolutions?.map((us: any) => us.solution_id) || [];
 
-      const combinedSolutions = (allSolutions || []).map(solution => ({
+      const combinedSolutions = (allSolutions || []).map((solution: any) => ({
         ...solution,
         has_access: approvedSolutionIds.includes(solution.solution_id),
       }));
