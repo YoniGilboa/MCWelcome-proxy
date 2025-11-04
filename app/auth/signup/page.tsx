@@ -1,8 +1,8 @@
+'use client';
+
 // Prevent static generation - this page needs runtime data
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-
-'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
