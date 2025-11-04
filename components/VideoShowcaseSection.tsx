@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Play, Users, Star, Award } from 'lucide-react';
+import { Play, Users, Star } from 'lucide-react';
 import { FadeIn } from './AnimatedSection';
 
 export default function VideoShowcaseSection() {

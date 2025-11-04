@@ -1,6 +1,6 @@
 // Prevent static generation - this page needs runtime data
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 'use client';
 
@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
   LayoutDashboard, Loader2, LogOut, UserCircle, 
-  Lock, Users, Video, FileText, Sparkles, Menu, X, Shield, FolderOpen,
-  TrendingUp, TrendingDown, Clock, CheckCircle, Activity, ArrowUpRight, Plus
+  Lock, Users, Video, FileText, Sparkles, Plus, FolderOpen,
+  TrendingUp, Clock, CheckCircle, Activity, ArrowUpRight
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';

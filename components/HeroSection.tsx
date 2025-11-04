@@ -7,10 +7,8 @@ import { FadeIn } from './AnimatedSection';
 import { 
   ChatBubbleLeftIcon, 
   XMarkIcon, 
-  UserGroupIcon, 
-  ArrowTrendingUpIcon 
+  UserGroupIcon
 } from '@heroicons/react/24/solid';
-import { PlayCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 export default function HeroSection() {

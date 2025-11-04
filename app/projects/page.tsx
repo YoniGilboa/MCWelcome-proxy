@@ -1,6 +1,6 @@
 // Prevent static generation - this page needs runtime data
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 'use client';
 
