@@ -29,6 +29,7 @@ export async function updateSession(request: NextRequest) {
             name,
             value: '',
             ...options,
+            maxAge: 0,
           })
         },
       },

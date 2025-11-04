@@ -33,7 +33,11 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    const response = NextResponse.next()
+    const response = NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
 
     const supabase = createServerClient(
       supabaseUrl,
@@ -55,6 +59,7 @@ export async function middleware(request: NextRequest) {
               name,
               value: '',
               ...options,
+              maxAge: 0,
             })
           },
         },
@@ -62,12 +67,7 @@ export async function middleware(request: NextRequest) {
     )
 
     // Refresh session if expired - with timeout protection
-    const sessionPromise = supabase.auth.getSession()
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Session check timeout')), 3000)
-    )
-    
-    const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any
+  const { data: { session } } = await withTimeout(supabase.auth.getSession(), 3000)
 
     // Protect routes that require authentication
     const protectedRoutes = ['/dashboard', '/solutions', '/chat', '/admin']
@@ -104,6 +104,22 @@ export async function middleware(request: NextRequest) {
     // Log error but allow request to proceed
     console.error('Middleware error:', error)
     return NextResponse.next()
+  }
+}
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('Session check timeout')), ms)
+  })
+
+  try {
+    return await Promise.race([promise, timeoutPromise])
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
   }
 }
 
