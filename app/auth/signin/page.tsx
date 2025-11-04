@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
 
-export default function SignIn() {
+function SignInForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/solutions'
@@ -205,5 +205,17 @@ export default function SignIn() {
         </div>
       </motion.div>
     </div>
+  )
+}
+
+export default function SignIn() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50/30 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-green-500 animate-spin" />
+      </div>
+    }>
+      <SignInForm />
+    </Suspense>
   )
 }
