@@ -33,11 +33,7 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    let response = NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    })
+    const response = NextResponse.next()
 
     const supabase = createServerClient(
       supabaseUrl,
@@ -48,16 +44,6 @@ export async function middleware(request: NextRequest) {
             return request.cookies.get(name)?.value
           },
           set(name: string, value: string, options: CookieOptions) {
-            request.cookies.set({
-              name,
-              value,
-              ...options,
-            })
-            response = NextResponse.next({
-              request: {
-                headers: request.headers,
-              },
-            })
             response.cookies.set({
               name,
               value,
@@ -65,16 +51,6 @@ export async function middleware(request: NextRequest) {
             })
           },
           remove(name: string, options: CookieOptions) {
-            request.cookies.set({
-              name,
-              value: '',
-              ...options,
-            })
-            response = NextResponse.next({
-              request: {
-                headers: request.headers,
-              },
-            })
             response.cookies.set({
               name,
               value: '',
@@ -93,24 +69,24 @@ export async function middleware(request: NextRequest) {
     
     const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any
 
-  // Protect routes that require authentication
-  const protectedRoutes = ['/dashboard', '/solutions', '/chat', '/admin']
-  const adminRoutes = ['/admin']
-  
-  const isProtectedRoute = protectedRoutes.some(route => 
-    request.nextUrl.pathname.startsWith(route)
-  )
-  
-  const isAdminRoute = adminRoutes.some(route =>
-    request.nextUrl.pathname.startsWith(route)
-  )
+    // Protect routes that require authentication
+    const protectedRoutes = ['/dashboard', '/solutions', '/chat', '/admin']
+    const adminRoutes = ['/admin']
+    
+    const isProtectedRoute = protectedRoutes.some(route => 
+      request.nextUrl.pathname.startsWith(route)
+    )
+    
+    const isAdminRoute = adminRoutes.some(route =>
+      request.nextUrl.pathname.startsWith(route)
+    )
 
-  if (isProtectedRoute && !session) {
-    // Redirect to sign in if not authenticated
-    const redirectUrl = new URL('/auth/signin', request.url)
-    redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
-  }
+    if (isProtectedRoute && !session) {
+      // Redirect to sign in if not authenticated
+      const redirectUrl = new URL('/auth/signin', request.url)
+      redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
 
     // Check admin access
     if (isAdminRoute && session) {
