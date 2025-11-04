@@ -3,13 +3,32 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  // Skip middleware for static files and API routes that don't need auth
+  const { pathname } = request.nextUrl
+  
+  // Allow public routes to pass through
+  const publicRoutes = ['/', '/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/reset-password', '/auth/callback', '/api/upload']
+  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith('/api/chat'))
+  
+  if (isPublicRoute) {
+    return NextResponse.next()
+  }
+
   // Check if environment variables are available
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // If env vars are missing, allow the request to proceed
+  // If env vars are missing, redirect to signin for protected routes
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables not configured')
+    const protectedRoutes = ['/dashboard', '/solutions', '/chat', '/admin', '/profile', '/projects']
+    const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+    
+    if (isProtectedRoute) {
+      const redirectUrl = new URL('/auth/signin', request.url)
+      redirectUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+    
     return NextResponse.next()
   }
 
@@ -66,8 +85,13 @@ export async function middleware(request: NextRequest) {
       }
     )
 
-    // Refresh session if expired
-    const { data: { session } } = await supabase.auth.getSession()
+    // Refresh session if expired - with timeout protection
+    const sessionPromise = supabase.auth.getSession()
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Session check timeout')), 3000)
+    )
+    
+    const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any
 
   // Protect routes that require authentication
   const protectedRoutes = ['/dashboard', '/solutions', '/chat', '/admin']
